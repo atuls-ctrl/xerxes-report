@@ -1,0 +1,167 @@
+@use 'sass:map';
+@use '../../styles' as *;
+
+// Track / thumb sizes. The thumb is `height - 2 * gap`, so it follows the track.
+$toggle-sizes: (
+  'sm': (
+    'width': 24px,
+    'height': 14px,
+    'gap': 2px,
+    'font-size': 12px,
+    'spacing': 6px,
+  ),
+  'md': (
+    'width': 28px,
+    'height': 16px,
+    'gap': 2px,
+    'font-size': $font-size-xs,
+    'spacing': $space-2,
+  ),
+  'lg': (
+    'width': 36px,
+    'height': 20px,
+    'gap': 2px,
+    'font-size': $font-size-md,
+    'spacing': $space-3,
+  ),
+);
+
+@mixin toggle-size($name) {
+  $size: map.get($toggle-sizes, $name);
+  --toggle-track-width: #{map.get($size, 'width')};
+  --toggle-track-height: #{map.get($size, 'height')};
+  --toggle-thumb-gap: #{map.get($size, 'gap')};
+  --toggle-font-size: #{map.get($size, 'font-size')};
+  --toggle-spacing: #{map.get($size, 'spacing')};
+}
+
+.root {
+  --toggle-active-color: #{$color-primary};
+  --toggle-inactive-color: #{$color-border};
+  --toggle-thumb-color: #{$color-white};
+  --toggle-focus-color: color-mix(
+    in srgb,
+    var(--toggle-active-color) 40%,
+    transparent
+  );
+  --toggle-label-color: #{$color-text-muted};
+  --toggle-thumb-size: calc(
+    var(--toggle-track-height) - 2 * var(--toggle-thumb-gap)
+  );
+
+  @include toggle-size('md');
+  @include reset-button;
+
+  display: inline-flex;
+  align-items: center;
+  gap: var(--toggle-spacing);
+  color: var(--toggle-label-color);
+  font-family: $font-family-base;
+  font-size: var(--toggle-font-size);
+  font-weight: $font-weight-regular;
+  line-height: 1.45;
+  text-align: start;
+  cursor: pointer;
+
+  @each $name, $_ in $toggle-sizes {
+    &[data-size='#{$name}'] {
+      @include toggle-size($name);
+    }
+  }
+
+  &[data-label-position='start'] {
+    flex-direction: row-reverse;
+  }
+}
+
+.track {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: var(--toggle-track-width);
+  height: var(--toggle-track-height);
+  border-radius: $radius-pill;
+  background: var(--toggle-inactive-color);
+  transition: background-color 0.2s ease;
+
+  .root[aria-checked='true'] & {
+    background: var(--toggle-active-color);
+  }
+}
+
+.thumb {
+  position: absolute;
+  top: var(--toggle-thumb-gap);
+  left: var(--toggle-thumb-gap);
+  display: block;
+  box-sizing: border-box;
+  width: var(--toggle-thumb-size);
+  height: var(--toggle-thumb-size);
+  border-radius: 50%;
+  background: var(--toggle-thumb-color);
+  box-shadow: $shadow-thumb;
+  transition: transform 0.2s ease;
+
+  .root[aria-checked='true'] & {
+    transform: translateX(
+      calc(
+        var(--toggle-track-width) - var(--toggle-thumb-size) - 2 *
+          var(--toggle-thumb-gap)
+      )
+    );
+  }
+}
+
+.label {
+  display: inline-block;
+}
+
+.root[aria-busy='true'] {
+  cursor: progress;
+
+  .thumb::after {
+    content: '';
+    position: absolute;
+    inset: 20%;
+    border: 1.5px solid var(--toggle-inactive-color);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: toggle-button-spin 0.7s linear infinite;
+  }
+
+  &[aria-checked='true'] .thumb::after {
+    border-color: var(--toggle-active-color);
+    border-top-color: transparent;
+  }
+}
+
+.root:disabled {
+  cursor: not-allowed;
+  opacity: $opacity-disabled-strong;
+}
+
+.root:focus-visible {
+  outline: none;
+
+  .track {
+    box-shadow: 0 0 0 $focus-ring-width var(--toggle-focus-color);
+  }
+}
+
+@keyframes toggle-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .track,
+  .thumb {
+    transition: none;
+  }
+
+  .root[aria-busy='true'] .thumb::after {
+    animation-duration: 2s;
+  }
+}

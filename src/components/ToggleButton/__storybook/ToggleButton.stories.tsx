@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
-import { fn } from 'storybook/test'
+import { fn, userEvent, within } from 'storybook/test'
 import { ToggleButton } from '../ToggleButton'
 
 const meta = {
@@ -9,7 +9,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     label: 'Compare previous 7 days',
-    labelPosition: 'start',
+    labelPosition: 'end',
     size: 'md',
     defaultChecked: true,
     disabled: false,
@@ -39,8 +39,43 @@ export const On: Story = {
   args: { defaultChecked: true },
 }
 
-export const LabelOnRight: Story = {
-  args: { labelPosition: 'end' },
+export const Off: Story = {
+  args: { defaultChecked: false },
+}
+
+export const LabelOnLeft: Story = {
+  args: { labelPosition: 'start' },
+}
+
+// Hover and focus are real pseudo-classes, so these stories trigger them.
+export const Hover: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.hover(within(canvasElement).getByRole('switch'))
+  },
+}
+
+export const Focus: Story = {
+  play: async ({ canvasElement }) => {
+    await userEvent.tab()
+    within(canvasElement).getByRole('switch').focus()
+  },
+}
+
+export const States: Story = {
+  render: (args) => (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <ToggleButton {...args} label="On" defaultChecked />
+      <ToggleButton {...args} label="Off" defaultChecked={false} />
+      <ToggleButton {...args} label="On, disabled" defaultChecked disabled />
+      <ToggleButton
+        {...args}
+        label="Off, disabled"
+        defaultChecked={false}
+        disabled
+      />
+      <ToggleButton {...args} label="On, loading" defaultChecked loading />
+    </div>
+  ),
 }
 
 export const WithoutLabel: Story = {
