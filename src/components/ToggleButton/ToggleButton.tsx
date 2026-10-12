@@ -5,7 +5,7 @@ import {
   type MouseEvent,
   type ReactNode,
 } from 'react'
-import styles from './ToggleButton.module.css'
+import styles from './ToggleButton.module.scss'
 
 function cssClass(name: 'root' | 'track' | 'thumb' | 'label'): string {
   const value = styles[name]
