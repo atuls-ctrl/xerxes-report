@@ -5,14 +5,3 @@ export type {
   ButtonSize,
   ButtonVariant,
 } from './Button'
-export {
-  BellIcon,
-  BookmarkIcon,
-  ChevronUpIcon,
-  ColumnsIcon,
-  DownloadIcon,
-  FilterIcon,
-  MenuIcon,
-  MoonIcon,
-  ShareIcon,
-} from './icons'

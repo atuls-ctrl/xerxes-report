@@ -1,12 +1,13 @@
 import './App.css'
-import { BellIcon, Button } from './components/Button'
+import { Button } from './components/Button'
+import { Icon } from './components/icons'
 import { ToggleButton } from './components/ToggleButton'
 
 function App() {
   return (
     <>
       <ToggleButton />
-      <Button variant="primary" icon={<BellIcon />}>
+      <Button variant="primary" icon={<Icon name="react" />}>
         Hello
       </Button>
     </>
