@@ -31,9 +31,10 @@ export function attachResponseInterceptors(api: AxiosInstance): void {
         // boot check cannot wipe a session just established by OTP login.
         const isMeRequest = requestUrl.includes("/auth/me");
         if (!isMeRequest) {
+          // TODO: clear the user session and redirect to login.
         }
       }
-      return Promise.reject(error);
+      throw error;
     },
   );
 }

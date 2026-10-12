@@ -28,7 +28,7 @@ export function toApiHttpErrorPayload(err: AxiosError): ApiHttpErrorPayload {
 
   let message =
     err.message ||
-    (typeof navigator !== "undefined" && navigator.onLine === false
+    (typeof navigator !== "undefined" && !navigator.onLine
       ? "You appear to be offline."
       : "Request failed.");
 

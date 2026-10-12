@@ -2,10 +2,10 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
 const GLOBAL_LOADING_DELAY_MS = 0;
 
-export type RequestLoadingState = {
+export interface RequestLoadingState {
   timerId: ReturnType<typeof setTimeout>;
   visible: boolean;
-};
+}
 
 export const requestLoadingState = new WeakMap<
   InternalAxiosRequestConfig,
@@ -26,6 +26,8 @@ export function attachRequestInterceptors(api: AxiosInstance): void {
       requestLoadingState.set(config, state);
       return config;
     },
-    (err) => Promise.reject(err),
+    (error: unknown) => {
+      throw error;
+    },
   );
 }

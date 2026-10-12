@@ -1,13 +1,13 @@
 /** Normalized API error parsed from Axios responses when available. */
-export type ApiHttpErrorPayload = {
+export interface ApiHttpErrorPayload {
   status: number;
   message: string;
   detail?: unknown;
-};
+}
 
-export type Pagination = {
+export interface Pagination {
   limit: number;
   page: number;
   pages: number;
   total: number;
-};
+}

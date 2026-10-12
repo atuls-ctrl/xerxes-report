@@ -1,31 +1,11 @@
 import type { CSSProperties, SVGProps } from 'react';
-import ReactComponent from '../../assets/icons/react.svg?react';
-
-const svgMap = {
-  react: ReactComponent,
-};
-
-/** Raster brand/platform logos under `src/assets/images` (keys match filenames). */
-const imageMap = {} as const;
-
-export type SvgKey = keyof typeof svgMap;
-export type ImageKey = keyof typeof imageMap;
-export type IconKey = SvgKey | ImageKey;
-
-export const ICON_NAMES = [
-  ...Object.keys(svgMap),
-  ...Object.keys(imageMap),
-] as IconKey[];
-
+import { imageMap, isImageKey, svgMap, type IconKey } from './iconMap';
 
 type IconProps = {
   name: IconKey;
   /** Used when rendering a raster/image icon. Ignored for SVGs. */
   alt?: string;
 } & Omit<SVGProps<SVGSVGElement>, 'name'>;
-
-const isImageKey = (name: IconKey): name is ImageKey =>
-  Object.prototype.hasOwnProperty.call(imageMap, name);
 
 const sharedStyle = (
   style: SVGProps<SVGSVGElement>['style'],
@@ -54,9 +34,7 @@ const Icon = ({ name, alt = '', ...props }: IconProps) => {
   }
 
   const SvgComponent = svgMap[name];
-  if (!SvgComponent) {
-    return null;
-  }
+  
   return <SvgComponent {...props} style={{
     display:"block",
     verticalAlign:"middle",
