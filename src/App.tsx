@@ -1,12 +1,14 @@
 import './App.css'
-import { Button } from './components/Button'
+import { BellIcon, Button } from './components/Button'
 import { ToggleButton } from './components/ToggleButton'
 
 function App() {
   return (
     <>
       <ToggleButton />
-      <Button variant="primary">Hello</Button>
+      <Button variant="primary" icon={<BellIcon />}>
+        Hello
+      </Button>
     </>
   )
 }
