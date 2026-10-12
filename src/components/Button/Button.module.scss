@@ -1,0 +1,135 @@
+@use '../../styles' as *;
+
+.root {
+  // Per-variant tokens (overridden below). Sizes come from `control-sizes`.
+  --button-bg: #{$color-white};
+  --button-border: #{$color-border};
+  --button-color: #{$color-text};
+  --button-shadow: #{$shadow-xs};
+  --button-hover-bg: #{$color-surface-hover};
+  --button-hover-border: var(--button-border);
+  --button-hover-color: var(--button-color);
+  --button-hover-shadow: var(--button-shadow);
+  --button-border-style: solid;
+
+  @include reset-button;
+  @include interactive-transition;
+  @include control-sizes(button);
+  @include focus-ring;
+  @include disabled-state;
+
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--button-gap);
+  box-sizing: border-box;
+  height: var(--button-height);
+  padding-inline: var(--button-padding-x);
+  border: $border-width var(--button-border-style) var(--button-border);
+  border-radius: $radius-sm;
+  background: var(--button-bg);
+  box-shadow: var(--button-shadow);
+  color: var(--button-color);
+  font-family: $font-family-base;
+  font-size: var(--button-font-size);
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+
+  @include hover {
+    border-color: var(--button-hover-border);
+    background: var(--button-hover-bg);
+    box-shadow: var(--button-hover-shadow);
+    color: var(--button-hover-color);
+  }
+
+  @include active {
+    border-color: var(--button-hover-border);
+    background: var(--button-hover-bg);
+    box-shadow: var(--button-hover-shadow);
+    color: var(--button-hover-color);
+  }
+
+  // Keep the focus ring visible on top of the variant's own shadow.
+  &:focus-visible {
+    box-shadow:
+      var(--button-shadow),
+      0 0 0 $focus-ring-width $color-focus-ring;
+  }
+
+  &[data-icon-only='true'] {
+    width: var(--button-height);
+    padding-inline: 0;
+  }
+
+  &[data-icon-position='end'] {
+    flex-direction: row-reverse;
+  }
+}
+
+// ---- Variants --------------------------------------------------------------
+.root[data-variant='primary'] {
+  --button-bg: #{$color-primary};
+  --button-border: #{$color-primary};
+  --button-color: #{$color-white};
+  --button-hover-bg: #{$color-primary};
+  --button-hover-shadow: 0 6px 14px -6px #{$color-primary};
+}
+
+.root[data-variant='ghost'] {
+  --button-bg: transparent;
+  --button-border: transparent;
+  --button-shadow: none;
+}
+
+// Dashed "add" button (e.g. Add filter): quiet until hovered.
+.root[data-variant='dashed'] {
+  --button-bg: transparent;
+  --button-border: #{$color-border};
+  --button-border-style: dashed;
+  --button-color: #{$color-text-muted};
+  --button-shadow: none;
+  --button-hover-bg: transparent;
+  --button-hover-border: #{$color-border-strong};
+  --button-hover-color: #{$color-text};
+
+  font-weight: $font-weight-regular;
+}
+
+// ---- Parts -----------------------------------------------------------------
+.icon {
+  @include icon-box(var(--button-icon-size));
+}
+
+.label {
+  display: inline-block;
+}
+
+// Secondary text such as a count ("19 of 138").
+.suffix {
+  color: $color-text-subtle;
+  font-weight: $font-weight-regular;
+}
+
+.badge {
+  position: absolute;
+  top: -$space-1;
+  left: 50%;
+  box-sizing: border-box;
+  min-width: 16px;
+  height: 16px;
+  padding-inline: 4px;
+  border: 2px solid $color-page;
+  border-radius: 8px;
+  background: $color-danger;
+  color: $color-white;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  line-height: 12px;
+  text-align: center;
+  pointer-events: none;
+}

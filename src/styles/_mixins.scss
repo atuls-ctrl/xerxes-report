@@ -1,0 +1,98 @@
+@use 'sass:map';
+@use 'variables' as *;
+
+// Reset a native <button>/<a> so a component can style it from scratch.
+@mixin reset-button {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+// Keyboard focus ring. Only shown for :focus-visible, never on mouse click.
+@mixin focus-ring($color: $color-focus-ring, $width: $focus-ring-width) {
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 $width $color;
+  }
+}
+
+// Disabled look. Matches native :disabled and aria-disabled.
+@mixin disabled-state($opacity: $opacity-disabled) {
+  &:disabled,
+  &[aria-disabled='true'] {
+    opacity: $opacity;
+    cursor: not-allowed;
+  }
+}
+
+// Hover + pressed styles for an enabled element. Takes a content block.
+@mixin hover {
+  &:hover:not(:disabled, [aria-disabled='true']) {
+    @content;
+  }
+}
+
+@mixin active {
+  &:active:not(:disabled, [aria-disabled='true']) {
+    @content;
+  }
+}
+
+// Smooth transition for the properties interactive controls change.
+@mixin interactive-transition(
+  $properties: (
+    background-color,
+    border-color,
+    box-shadow,
+    color,
+  )
+) {
+  transition-property: $properties;
+  transition-duration: $transition-duration;
+  transition-timing-function: $transition-easing;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// Sets the CSS custom properties for one size from `$control-sizes`.
+// Usage: `.root[data-size='md'] { @include control-size('md'); }`
+@mixin control-size($name, $prefix: control) {
+  $size: map.get($control-sizes, $name);
+  --#{$prefix}-height: #{map.get($size, 'height')};
+  --#{$prefix}-padding-x: #{map.get($size, 'padding-x')};
+  --#{$prefix}-icon-size: #{map.get($size, 'icon')};
+  --#{$prefix}-font-size: #{map.get($size, 'font-size')};
+  --#{$prefix}-gap: #{map.get($size, 'gap')};
+}
+
+// Emits one `[data-size]` block per entry in `$control-sizes`.
+@mixin control-sizes($prefix: control) {
+  @each $name, $_ in $control-sizes {
+    &[data-size='#{$name}'] {
+      @include control-size($name, $prefix);
+    }
+  }
+}
+
+// Centers a fixed-size icon box and lets its svg fill it.
+@mixin icon-box($size: 16px) {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: $size;
+  height: $size;
+
+  > svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+}
