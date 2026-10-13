@@ -1,16 +1,10 @@
-import './App.css'
-import { BellIcon, Button } from './components/Button'
-import { ToggleButton } from './components/ToggleButton'
+import { BrowserRouter } from 'react-router-dom'
+import { AppRoutes } from './routes'
 
-function App() {
+export default function App() {
   return (
-    <>
-      <ToggleButton />
-      <Button variant="primary" icon={<BellIcon />}>
-        Hello
-      </Button>
-    </>
+    <BrowserRouter>
+      <AppRoutes />
+    </BrowserRouter>
   )
 }
-
-export default App

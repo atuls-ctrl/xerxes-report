@@ -1,0 +1,34 @@
+@use '../../styles' as *;
+
+.root {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  height: 100svh;
+  overflow: hidden;
+  background: $color-page;
+  color: $color-text;
+  font-family: $font-family-base;
+
+  > aside {
+    border-right: $border-width solid $color-border;
+    background: $color-white;
+    overflow-y: auto;
+  }
+}
+
+.body {
+  display: grid;
+  grid-template-rows: 56px 1fr;
+  min-width: 0;
+  min-height: 0;
+
+  > header {
+    border-bottom: $border-width solid $color-border;
+    background: $color-white;
+  }
+
+  > main {
+    min-height: 0;
+    overflow: auto;
+  }
+}
