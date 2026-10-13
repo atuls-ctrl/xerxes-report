@@ -1,0 +1,140 @@
+@use '../../../styles' as *;
+
+$legend-font-size: 12px;
+$swatch-width: 12px;
+$swatch-height: 3px;
+$tip-min-width: 160px;
+$tip-radius: 8px;
+$tip-dot-size: 8px;
+$shadow-tip:
+  0 16px 40px -12px rgba($color-text, 0.28),
+  0 2px 6px rgba($color-text, 0.08);
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  width: 100%;
+  min-width: 0;
+  color: $color-text-muted;
+  font-family: $font-family-base;
+
+  &[data-legend='bottom'] {
+    flex-direction: column-reverse;
+  }
+}
+
+// ---- Legend ----------------------------------------------------------------
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-1 $space-5;
+}
+
+.legendItem {
+  @include reset-button;
+  @include interactive-transition((color, opacity));
+  @include focus-ring;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 4px;
+  color: $color-text-muted;
+  font-size: $legend-font-size;
+  line-height: $line-height-tight;
+  cursor: pointer;
+
+  @include hover {
+    color: $color-text;
+  }
+
+  &[aria-pressed='false'] {
+    opacity: $opacity-disabled-strong;
+  }
+}
+
+.swatch {
+  flex-shrink: 0;
+  width: $swatch-width;
+  height: $swatch-height;
+  border-radius: 2px;
+}
+
+// ---- Chart (ApexCharts) ----------------------------------------------------
+.chart {
+  min-width: 0;
+
+  :global {
+    .apexcharts-xaxis-label,
+    .apexcharts-yaxis-label {
+      fill: $color-text-subtle;
+    }
+
+    .apexcharts-gridline,
+    .apexcharts-grid-borders line {
+      stroke: $color-border-subtle;
+    }
+
+    .apexcharts-xcrosshairs {
+      stroke: $color-border;
+    }
+
+    // Tripled class so these win over the styles ApexCharts injects.
+    .apexcharts-tooltip.apexcharts-tooltip.apexcharts-tooltip {
+      border: $border-width solid $color-border;
+      border-radius: $tip-radius;
+      background: $color-white;
+      box-shadow: $shadow-tip;
+      color: $color-text;
+    }
+  }
+}
+
+.root[data-sparkline] .chart {
+  // Keeps the chart inline-sized by its parent, e.g. a table cell.
+  line-height: 0;
+}
+
+// ---- Tooltip ---------------------------------------------------------------
+.tip {
+  box-sizing: border-box;
+  min-width: $tip-min-width;
+  padding: 6px $space-3 $space-2;
+  font-family: $font-family-base;
+  font-size: $legend-font-size;
+  line-height: $line-height-tight;
+}
+
+.tipTitle {
+  margin-bottom: $space-1;
+  color: $color-text-subtle;
+  font-size: 11.5px;
+  font-weight: $font-weight-medium;
+}
+
+.tipRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tipDot {
+  flex-shrink: 0;
+  width: $tip-dot-size;
+  height: $tip-dot-size;
+  border-radius: 50%;
+}
+
+.tipLabel {
+  flex: 1;
+  color: $color-text-muted;
+  white-space: nowrap;
+}
+
+.tipValue {
+  margin-inline-start: $space-2;
+  color: $color-text;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+}
