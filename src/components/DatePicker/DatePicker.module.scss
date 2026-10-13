@@ -1,0 +1,339 @@
+@use '../../styles' as *;
+
+$popup-width: 240px;
+$popup-padding-x: 14px;
+$cell-size: 28px;
+$checkbox-size: 16px;
+$color-range-bg: rgba($color-primary, 0.12);
+
+.root {
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+// ---- Trigger ---------------------------------------------------------------
+// The trigger is a regular `Button`; these only let a long label truncate.
+.root .trigger {
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 100%;
+
+  > * {
+    min-width: 0;
+  }
+}
+
+.triggerContent {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.triggerText {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chevron {
+  @include icon-box(14px);
+
+  path {
+    stroke: $color-text-muted;
+  }
+}
+
+// Hidden Ant picker. It covers the trigger so the dropdown aligns to it.
+.anchor {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+
+  :global(.ant-picker) {
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    padding: 0;
+  }
+}
+
+// ---- Dropdown --------------------------------------------------------------
+// Doubled class so these win over Ant's generated styles.
+.popup.popup {
+  max-width: calc(100vw - #{2 * $space-2});
+  font-family: $font-family-base;
+
+  :global {
+    .ant-picker-range-arrow {
+      display: none;
+    }
+
+    .ant-picker-panel-container {
+      overflow: hidden;
+      border: $border-width solid $color-border-subtle;
+      border-radius: $radius-md;
+      background: $color-white;
+      box-shadow: $shadow-popup;
+    }
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: $popup-width;
+  max-width: 100%;
+  color: $color-text;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
+  text-align: start;
+}
+
+.body {
+  max-height: min(380px, calc(100vh - 180px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.title {
+  padding: $space-4 $popup-padding-x $space-1;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: $space-1;
+}
+
+.option {
+  @include reset-button;
+  @include interactive-transition;
+
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  min-height: 36px;
+  padding: $space-1 $popup-padding-x;
+  color: $color-text;
+  text-align: start;
+  cursor: pointer;
+
+  @include hover {
+    background: $color-surface-hover;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 $focus-ring-width $color-focus-ring;
+  }
+
+  &[aria-checked='true'] {
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.checkbox {
+  @include icon-box($checkbox-size);
+  @include interactive-transition;
+
+  box-sizing: border-box;
+  padding: 1px;
+  border: $border-width solid $color-border;
+  border-radius: 4px;
+  background: $color-white;
+
+  .option[aria-checked='true'] & {
+    border-color: $color-primary;
+    background: $color-primary;
+  }
+
+  path {
+    stroke: $color-white;
+    stroke-width: 3;
+  }
+}
+
+.optionLabel {
+  min-width: 0;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  min-height: 44px;
+  padding: $space-2 $popup-padding-x;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.summary {
+  min-width: 0;
+  color: $color-text-subtle;
+  font-size: 12px;
+}
+
+// ---- Calendar (Ant Design panel) -------------------------------------------
+.popup.popup .calendar {
+  padding: 0 ($popup-padding-x - 2px) $space-2;
+
+  :global {
+    .ant-picker-panel-layout,
+    .ant-picker-panels {
+      display: block;
+    }
+
+    // RangePicker renders two months side by side; the design shows one.
+    .ant-picker-panels > :not(:first-child) {
+      display: none;
+    }
+
+    .ant-picker-panel {
+      display: block;
+      width: 100%;
+      border: 0;
+      background: none;
+    }
+
+    .ant-picker-date-panel,
+    .ant-picker-month-panel,
+    .ant-picker-year-panel,
+    .ant-picker-decade-panel {
+      width: 100%;
+    }
+
+    .ant-picker-header {
+      align-items: center;
+      padding: 0;
+      border-bottom: 0;
+      color: $color-text;
+
+      // Ant hides "next" on the first of its two panels.
+      > button {
+        visibility: visible !important;
+        min-width: $cell-size;
+        height: $cell-size;
+        border-radius: $radius-sm;
+        color: $color-text-muted;
+
+        &:hover {
+          background: $color-surface-hover;
+        }
+      }
+    }
+
+    .ant-picker-header-super-prev-btn,
+    .ant-picker-header-super-next-btn {
+      display: none;
+    }
+
+    .ant-picker-header-view {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      line-height: 36px;
+
+      > button:hover {
+        color: $color-primary;
+      }
+    }
+
+    .ant-picker-body {
+      padding: 0;
+    }
+
+    .ant-picker-content {
+      width: 100%;
+
+      th,
+      td {
+        min-width: 0;
+      }
+
+      th {
+        height: $cell-size;
+        color: $color-text-subtle;
+        font-size: 12px;
+      }
+    }
+
+    .ant-picker-cell {
+      padding: 1px 0;
+      color: $color-text;
+      font-size: $font-size-xs;
+
+      &::before {
+        height: $cell-size;
+      }
+
+      // Days of the neighbouring months are left blank.
+      &:not(.ant-picker-cell-in-view) {
+        visibility: hidden;
+      }
+    }
+
+    .ant-picker-cell-inner {
+      display: block;
+      min-width: 0;
+      height: $cell-size;
+      border-radius: $radius-sm;
+      line-height: $cell-size;
+    }
+
+    .ant-picker-cell:hover:not(
+        .ant-picker-cell-selected,
+        .ant-picker-cell-range-start,
+        .ant-picker-cell-range-end,
+        .ant-picker-cell-disabled
+      )
+      .ant-picker-cell-inner {
+      background: $color-surface-hover;
+    }
+
+    .ant-picker-cell-in-view.ant-picker-cell-today
+      .ant-picker-cell-inner::before {
+      border-color: $color-primary;
+      border-radius: $radius-sm;
+    }
+
+    .ant-picker-cell-in-view.ant-picker-cell-in-range,
+    .ant-picker-cell-in-view.ant-picker-cell-range-start,
+    .ant-picker-cell-in-view.ant-picker-cell-range-end {
+      &:not(.ant-picker-cell-disabled)::before {
+        background: $color-range-bg;
+      }
+    }
+
+    .ant-picker-cell-in-view.ant-picker-cell-selected,
+    .ant-picker-cell-in-view.ant-picker-cell-range-start,
+    .ant-picker-cell-in-view.ant-picker-cell-range-end {
+      &:not(.ant-picker-cell-disabled) .ant-picker-cell-inner {
+        border-radius: $radius-sm;
+        background: $color-primary;
+        color: $color-white;
+        font-weight: $font-weight-semibold;
+      }
+    }
+
+    .ant-picker-cell-disabled {
+      color: $color-border;
+
+      &::before {
+        background: none;
+      }
+    }
+
+    // Ant's own footer (presets / OK) is replaced by ours.
+    .ant-picker-footer {
+      display: none;
+    }
+  }
+}

@@ -64,6 +64,11 @@ $shadow-xs:
 
 $shadow-thumb: 0 1px 2px rgba(0, 0, 0, 0.2);
 
+// Floating surfaces: dropdowns, popovers.
+$shadow-popup:
+  0 12px 24px -8px rgba(16, 24, 40, 0.18),
+  0 2px 6px rgba(16, 24, 40, 0.08);
+
 // ---- Motion & state --------------------------------------------------------
 $transition-duration: 0.15s;
 $transition-easing: ease;

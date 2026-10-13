@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, ReactNode, Ref } from 'react'
 import styles from './Button.module.scss'
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'dashed'
@@ -19,6 +19,7 @@ export interface ButtonProps extends NativeButtonProps {
   /** Small red counter on the top-right (icon buttons). Hidden when empty. */
   badge?: ReactNode
   disabled?: boolean
+  ref?: Ref<HTMLButtonElement>
 }
 
 export function Button({
