@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import { BarChart, type BarChartSeries } from '../BarChart'
+import { BarChart, type BarChartProps, type BarChartSeries } from '../BarChart'
 
 const categories = [
   '5 Oct',
@@ -235,6 +235,147 @@ export const Controlled: Story = {
         </span>
       </div>
     )
+  },
+}
+
+// ---- Horizontal layout -----------------------------------------------------
+const timeToInstall = {
+  categories: [
+    '<10s',
+    '10–30s',
+    '30–60s',
+    '1–5m',
+    '5–30m',
+    '30–60m',
+    '1–6h',
+    '6–24h',
+    '>24h',
+  ],
+  series: [
+    {
+      name: 'Installs',
+      data: [13.1, 4.2, 6.6, 22.5, 16.9, 7.1, 7.1, 1.6, 0],
+      formatValue: percent,
+    },
+  ],
+}
+
+const fraudReasons = {
+  categories: [
+    'Click flooding',
+    'Click injection',
+    'Install hijacking',
+    'Device farm / emulator',
+    'Bots',
+    'Duplicate device / IP',
+    'Other',
+  ],
+  series: [{ name: 'Rejected installs', data: [12, 11, 4, 5, 2, 3, 6] }],
+}
+const fraudTotal = fraudReasons.series[0].data.reduce((sum, n) => sum + n, 0)
+
+// The column of the design the rows sit in.
+const narrowCard = { maxWidth: 463 }
+
+// The rows size themselves, so the meta's fixed `height` is dropped.
+const renderRows = ({ height: _height, ...args }: BarChartProps) => (
+  <div style={narrowCard}>
+    <BarChart {...args} />
+  </div>
+)
+
+// Rows instead of columns: label, bar and value. The first bar is flagged.
+export const Horizontal: Story = {
+  args: {
+    ...timeToInstall,
+    layout: 'horizontal',
+    normalize: false,
+    legend: 'none',
+    barColors: ['#d03b3b'],
+  },
+  render: renderRows,
+}
+
+// Any text can end a row, here the share and the count.
+export const HorizontalValueLabels: Story = {
+  args: {
+    ...fraudReasons,
+    layout: 'horizontal',
+    normalize: false,
+    legend: 'none',
+    formatValueLabel: (value) =>
+      `${String(Math.round((value / fraudTotal) * 100))}% · ${String(value)}`,
+  },
+  render: renderRows,
+}
+
+export const HorizontalWithoutValues: Story = {
+  args: { ...Horizontal.args, showValueLabels: false },
+  render: renderRows,
+}
+
+// Thicker bars, taller rows, a wider label column and another color.
+export const HorizontalCustomSizes: Story = {
+  args: {
+    ...fraudReasons,
+    layout: 'horizontal',
+    normalize: false,
+    legend: 'none',
+    colors: ['#1baf7a'],
+    barHeight: 16,
+    rowHeight: 32,
+    labelWidth: 170,
+    borderRadius: 8,
+  },
+  render: renderRows,
+}
+
+// Several series share a row; the legend comes back when asked for.
+export const HorizontalStacked: Story = {
+  args: {
+    layout: 'horizontal',
+    normalize: false,
+    stacked: true,
+    legend: 'top',
+    series: campaigns.slice(0, 3),
+    showValueLabels: false,
+  },
+  render: renderRows,
+}
+
+// Long labels truncate and the bars take what is left.
+export const HorizontalNarrow: Story = {
+  args: { ...HorizontalValueLabels.args },
+  render: ({ height: _height, ...args }) => (
+    <div style={{ width: 260 }}>
+      <BarChart {...args} />
+    </div>
+  ),
+}
+
+export const HorizontalRows: Story = {
+  args: { ...Horizontal.args },
+  render: renderRows,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement)
+    // One label and one value per category.
+    for (const category of timeToInstall.categories) {
+      await expect(canvas.getByText(category)).toBeVisible()
+    }
+    await expect(canvas.getByText('22.5%')).toBeVisible()
+    await expect(canvas.getByText('0.0%')).toBeVisible()
+    await expect(canvas.queryByRole('button')).not.toBeInTheDocument()
+
+    const selector = '.apexcharts-bar-area'
+    await waitFor(() =>
+      expect(canvasElement.querySelectorAll(selector)).toHaveLength(
+        timeToInstall.categories.length,
+      ),
+    )
+    const bars = canvasElement.querySelectorAll(selector)
+    // The flagged row keeps its own color; ApexCharts writes it as rgba.
+    await expect(bars[0]).toHaveAttribute('fill', 'rgba(208,59,59,1)')
+    await expect(bars[1]).toHaveAttribute('fill', 'rgba(42,120,214,1)')
   },
 }
 

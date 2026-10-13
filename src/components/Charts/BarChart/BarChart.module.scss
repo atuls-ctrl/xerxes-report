@@ -9,3 +9,47 @@
     stroke: none;
   }
 }
+
+// ---- Horizontal layout -----------------------------------------------------
+// One row per category: label, bar, value. ApexCharts draws the bars; every
+// row of text is as tall as a row of the plot, so the three columns line up.
+$value-min-width: 72px;
+$bars-min-width: 40px;
+
+.rows {
+  display: grid;
+  grid-template-columns:
+    minmax(0, var(--bar-label-width))
+    minmax($bars-min-width, 1fr)
+    auto;
+  column-gap: $space-3;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  line-height: var(--bar-row-height);
+}
+
+.rowLabels,
+.rowValues {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rowLabel,
+.rowValue {
+  height: var(--bar-row-height);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowBars {
+  min-width: 0;
+  // Keeps the plot exactly as tall as its rows.
+  line-height: 0;
+}
+
+.rowValues {
+  min-width: $value-min-width;
+  text-align: end;
+}

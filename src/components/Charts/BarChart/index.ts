@@ -1,5 +1,6 @@
 export { BarChart } from './BarChart'
 export type {
+  BarChartLayout,
   BarChartLegendPosition,
   BarChartProps,
   BarChartSeries,
