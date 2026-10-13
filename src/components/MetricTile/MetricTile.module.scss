@@ -84,7 +84,8 @@ $color-low-text: #b42323;
 }
 
 .value {
-  max-width: 100%;
+  // Stretched, not `max-width`: a percentage would shrink the column's own size.
+  align-self: stretch;
   overflow: hidden;
   font-size: $value-font-size;
   font-weight: $font-weight-semibold;
@@ -117,9 +118,11 @@ $color-low-text: #b42323;
   white-space: nowrap;
 }
 
-// The sparkline gives way first when the tile gets narrow.
+// The sparkline only takes the room the value leaves, so it gives way first
+// when the tile gets narrow.
 .chart {
-  flex: 0 1000 $chart-width;
+  flex: 1 1 0;
   min-width: 0;
+  max-width: $chart-width;
   overflow: hidden;
 }

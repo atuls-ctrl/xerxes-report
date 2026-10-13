@@ -1,0 +1,174 @@
+@use '../../styles' as *;
+
+$drawer-width: 500px;
+$drawer-padding-x: 18px;
+$drawer-duration: 0.2s;
+$drawer-shadow:
+  0 16px 40px -12px rgba($color-text, 0.28),
+  0 2px 6px rgba($color-text, 0.08);
+$overlay-color: rgba($color-text, 0.32);
+$title-font-size: 17px;
+$caption-font-size: 12px;
+
+// The page behind a modal drawer does not scroll.
+:global(html):has(.root[open]) {
+  overflow: hidden;
+}
+
+// A native <dialog>: these reset the centered box the browser gives it.
+.root {
+  --drawer-width: #{$drawer-width};
+  --drawer-offset: 100%;
+
+  position: fixed;
+  inset: 0 0 0 auto;
+  box-sizing: border-box;
+  flex-direction: column;
+  width: var(--drawer-width);
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-inline-start: $border-width solid $color-border-subtle;
+  background: $color-white;
+  box-shadow: $drawer-shadow;
+  color: $color-text;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
+  text-align: start;
+  transform: translateX(var(--drawer-offset));
+  // `display` and `overlay` keep the drawer rendered while it slides out.
+  transition-property: transform, display, overlay;
+  transition-duration: $drawer-duration;
+  transition-timing-function: $transition-easing;
+  transition-behavior: allow-discrete;
+
+  &:focus {
+    outline: none;
+  }
+
+  &[open] {
+    display: flex;
+    transform: none;
+
+    @starting-style {
+      transform: translateX(var(--drawer-offset));
+    }
+  }
+
+  &[data-placement='left'] {
+    --drawer-offset: -100%;
+
+    inset: 0 auto 0 0;
+    border-inline-start: 0;
+    border-inline-end: $border-width solid $color-border-subtle;
+  }
+
+  &::backdrop {
+    background: transparent;
+    transition-property: background-color, display, overlay;
+    transition-duration: $drawer-duration;
+    transition-timing-function: $transition-easing;
+    transition-behavior: allow-discrete;
+  }
+
+  &[open][data-overlay='true']::backdrop {
+    background: $overlay-color;
+
+    @starting-style {
+      background: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+
+    &::backdrop {
+      transition: none;
+    }
+  }
+}
+
+// ---- Header ----------------------------------------------------------------
+.header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+  padding: $space-5 $drawer-padding-x 13px;
+  border-bottom: $border-width solid transparent;
+
+  &[data-divider='true'] {
+    border-bottom-color: $color-border-subtle;
+  }
+}
+
+.heading {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  overflow: hidden;
+  font-size: $title-font-size;
+  font-weight: $font-weight-semibold;
+  line-height: $line-height-tight;
+  letter-spacing: -0.01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// Eyebrow above the title and subtitle below it.
+.caption {
+  overflow: hidden;
+  color: $color-text-subtle;
+  font-size: $caption-font-size;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ---- Content ---------------------------------------------------------------
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  &[data-padded='true'] {
+    padding: $space-5 $drawer-padding-x;
+  }
+}
+
+// ---- Footer ----------------------------------------------------------------
+.footer {
+  display: flex;
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  min-height: 56px;
+  padding: $space-2 $space-5;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.secondaryActions,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.actions {
+  gap: $space-2;
+  margin-inline-start: auto;
+}
