@@ -1,0 +1,11 @@
+@use '../../../styles' as *;
+
+// Legend, grid and tooltip styles live in `../shared/Chart.module.scss`.
+
+.root {
+  // Band behind the hovered group of bars.
+  :global(.apexcharts-xcrosshairs) {
+    fill: $color-surface-hover;
+    stroke: none;
+  }
+}

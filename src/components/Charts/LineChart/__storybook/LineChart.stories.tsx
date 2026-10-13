@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
-import { LineChart } from '../LineChart'
-import type { LineChartSeries } from '../chartOptions'
+import { LineChart, type LineChartSeries } from '../LineChart'
 
 const categories = [
   '5 Oct',

@@ -1,20 +1,25 @@
 import type { ApexOptions } from 'apexcharts'
-import { useMemo, useState, type HTMLAttributes } from 'react'
+import { useMemo, type HTMLAttributes } from 'react'
 import ReactApexChart from 'react-apexcharts'
+import { ChartFrame } from '../shared/ChartFrame'
 import {
   DEFAULT_COLORS,
-  escapeHtml,
+  DEFAULT_HEIGHT,
   formatCompact,
+  getBaseOptions,
   getLastPointIndex,
-  getSeriesKey,
   mergeOptions,
   normalizeData,
-  type LineChartSeries,
-} from './chartOptions'
+  type ChartLegendPosition,
+  type ChartSeries,
+} from '../shared/chartOptions'
+import { createTooltipRenderer } from '../shared/tooltip'
+import { useChartSeries } from '../shared/useChartSeries'
 import styles from './LineChart.module.scss'
 
+export type LineChartSeries = ChartSeries
 export type LineChartCurve = 'straight' | 'smooth' | 'stepline'
-export type LineChartLegendPosition = 'top' | 'bottom' | 'none'
+export type LineChartLegendPosition = ChartLegendPosition
 
 type NativeDivProps = Omit<HTMLAttributes<HTMLDivElement>, 'children'>
 
@@ -59,11 +64,8 @@ export interface LineChartProps extends NativeDivProps {
   options?: ApexOptions
 }
 
-const DEFAULT_HEIGHT = 270
 const SPARKLINE_HEIGHT = 30
-const AXIS_FONT_SIZE = '11px'
 const MARKER_STROKE = '#fff'
-const EMPTY_VALUE = '–'
 
 export function LineChart({
   series,
@@ -90,28 +92,18 @@ export function LineChart({
   className,
   ...rest
 }: LineChartProps) {
-  const [internalHidden, setInternalHidden] = useState(
-    () => defaultHiddenSeries ?? [],
-  )
-  const hidden = hiddenSeries ?? internalHidden
+  const { items, visible, hidden, toggleSeries } = useChartSeries({
+    series,
+    colors,
+    hiddenSeries,
+    defaultHiddenSeries,
+    onHiddenSeriesChange,
+  })
 
   // Sparklines are bare trend lines unless a part is asked for explicitly.
   const legendPosition = legend ?? (sparkline ? 'none' : 'top')
   const tooltipEnabled = showTooltip ?? !sparkline
   const endMarkersEnabled = showEndMarkers ?? !sparkline
-
-  const items = useMemo(() => {
-    const palette = colors.length > 0 ? colors : DEFAULT_COLORS
-    return series.map((item, index) => ({
-      item,
-      key: getSeriesKey(item),
-      color: item.color ?? palette[index % palette.length],
-    }))
-  }, [series, colors])
-  const visible = useMemo(
-    () => items.filter(({ key }) => !hidden.includes(key)),
-    [items, hidden],
-  )
 
   const chartSeries = useMemo(
     () =>
@@ -123,31 +115,6 @@ export function LineChart({
   )
 
   const chartOptions = useMemo(() => {
-    const renderTooltip = ({ dataPointIndex }: { dataPointIndex: number }) => {
-      const category = categories[dataPointIndex] ?? ''
-      const title = formatTooltipTitle?.(category, dataPointIndex) ?? category
-      const rows = visible.map(({ item, color }) => {
-        const value = item.data[dataPointIndex] ?? null
-        const text =
-          value === null
-            ? EMPTY_VALUE
-            : (item.formatValue?.(value) ?? formatValue(value, item))
-        return (
-          `<div class="${styles.tipRow}">` +
-          `<i class="${styles.tipDot}" style="background:${escapeHtml(color)}"></i>` +
-          `<span class="${styles.tipLabel}">${escapeHtml(item.name)}</span>` +
-          `<span class="${styles.tipValue}">${escapeHtml(text)}</span>` +
-          `</div>`
-        )
-      })
-      return (
-        `<div class="${styles.tip}">` +
-        `<div class="${styles.tipTitle}">${escapeHtml(title)}</div>` +
-        rows.join('') +
-        `</div>`
-      )
-    }
-
     // Drawn as annotations: discrete markers would switch off the hover dots.
     const endMarkers = endMarkersEnabled
       ? visible.flatMap(({ color }, seriesIndex) => {
@@ -167,16 +134,25 @@ export function LineChart({
         })
       : []
 
-    const base: ApexOptions = {
-      chart: {
-        fontFamily: 'inherit',
-        parentHeightOffset: 0,
-        toolbar: { show: false },
-        zoom: { enabled: false },
-        selection: { enabled: false },
-        sparkline: { enabled: sparkline },
-      },
+    const base = getBaseOptions({
+      categories,
       colors: visible.map(({ color }) => color),
+      normalize,
+      yMin,
+      yMax,
+      yTickAmount,
+      formatYAxis,
+      tooltipEnabled,
+      renderTooltip: createTooltipRenderer({
+        series: visible,
+        categories,
+        formatValue,
+        formatTooltipTitle,
+      }),
+    })
+
+    const line: ApexOptions = {
+      chart: { sparkline: { enabled: sparkline } },
       stroke: { curve, width: strokeWidth, lineCap: 'round' },
       // Only the sparkline is an area chart; on a line `fill` paints the stroke.
       ...(sparkline && {
@@ -185,13 +161,6 @@ export function LineChart({
           gradient: { opacityFrom: 0.3, opacityTo: 0.05, stops: [0, 100] },
         },
       }),
-      dataLabels: { enabled: false },
-      legend: { show: false },
-      grid: {
-        xaxis: { lines: { show: false } },
-        yaxis: { lines: { show: true } },
-        padding: { top: 0, right: 16, bottom: 0, left: 8 },
-      },
       markers: {
         size: 0,
         strokeColors: MARKER_STROKE,
@@ -200,37 +169,11 @@ export function LineChart({
       },
       annotations: { points: endMarkers },
       xaxis: {
-        categories,
-        axisBorder: { show: false },
-        axisTicks: { show: false },
-        tooltip: { enabled: false },
         crosshairs: { show: true, stroke: { width: 1, dashArray: 0 } },
-        labels: {
-          rotate: 0,
-          hideOverlappingLabels: true,
-          style: { fontSize: AXIS_FONT_SIZE },
-        },
-      },
-      yaxis: {
-        tickAmount: yTickAmount,
-        ...(normalize ? { min: 0, max: 100 } : {}),
-        ...(yMin !== undefined && { min: yMin }),
-        ...(yMax !== undefined && { max: yMax }),
-        labels: {
-          style: { fontSize: AXIS_FONT_SIZE },
-          formatter: (value: number) =>
-            normalize ? `${String(Math.round(value))}%` : formatYAxis(value),
-        },
-      },
-      tooltip: {
-        enabled: tooltipEnabled,
-        shared: true,
-        intersect: false,
-        custom: renderTooltip,
       },
     }
 
-    return mergeOptions(base, options)
+    return mergeOptions(mergeOptions(base, line), options)
   }, [
     visible,
     chartSeries,
@@ -250,54 +193,25 @@ export function LineChart({
     options,
   ])
 
-  const toggleSeries = (key: string) => {
-    const next = hidden.includes(key)
-      ? hidden.filter((item) => item !== key)
-      : [...hidden, key]
-    if (hiddenSeries === undefined) setInternalHidden(next)
-    onHiddenSeriesChange?.(next)
-  }
-
   const classes = [styles.root, className].filter(Boolean).join(' ')
 
   return (
-    <div
+    <ChartFrame
       {...rest}
       className={classes}
-      data-legend={legendPosition}
+      items={items}
+      hiddenKeys={hidden}
+      onToggleSeries={toggleSeries}
+      legend={legendPosition}
       data-sparkline={sparkline || undefined}
     >
-      {legendPosition !== 'none' && (
-        <div className={styles.legend}>
-          {items.map(({ item, key, color }) => (
-            <button
-              key={key}
-              type="button"
-              className={styles.legendItem}
-              aria-pressed={!hidden.includes(key)}
-              onClick={() => {
-                toggleSeries(key)
-              }}
-            >
-              <span
-                className={styles.swatch}
-                style={{ background: color }}
-                aria-hidden="true"
-              />
-              <span>{item.name}</span>
-            </button>
-          ))}
-        </div>
-      )}
-      <div className={styles.chart}>
-        <ReactApexChart
-          type={sparkline ? 'area' : 'line'}
-          series={chartSeries}
-          options={chartOptions}
-          width="100%"
-          height={height ?? (sparkline ? SPARKLINE_HEIGHT : DEFAULT_HEIGHT)}
-        />
-      </div>
-    </div>
+      <ReactApexChart
+        type={sparkline ? 'area' : 'line'}
+        series={chartSeries}
+        options={chartOptions}
+        width="100%"
+        height={height ?? (sparkline ? SPARKLINE_HEIGHT : DEFAULT_HEIGHT)}
+      />
+    </ChartFrame>
   )
 }
