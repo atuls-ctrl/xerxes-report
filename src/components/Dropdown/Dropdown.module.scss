@@ -1,0 +1,97 @@
+@use '../../styles' as *;
+
+$panel-width: 235px;
+$panel-offset: 10px;
+$panel-radius: 10px;
+$panel-padding-x: $space-4;
+$panel-shadow:
+  0 16px 40px -12px rgba(16, 24, 40, 0.28),
+  0 2px 6px rgba(16, 24, 40, 0.08);
+
+.root {
+  --dropdown-width: #{$panel-width};
+
+  position: relative;
+  display: inline-flex;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+// ---- Dropdown --------------------------------------------------------------
+.panel {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--dropdown-width);
+  max-width: calc(100vw - #{2 * $space-2});
+  overflow: hidden;
+  border: $border-width solid $color-border;
+  border-radius: $panel-radius;
+  background: $color-white;
+  box-shadow: $panel-shadow;
+  color: $color-text;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
+  text-align: start;
+  // Set by the component to keep the dropdown inside the viewport.
+  transform: translateX(var(--dropdown-shift, 0));
+
+  &:focus {
+    outline: none;
+  }
+
+  &[data-placement^='bottom'] {
+    top: calc(100% + #{$panel-offset});
+  }
+
+  &[data-placement^='top'] {
+    bottom: calc(100% + #{$panel-offset});
+  }
+
+  &[data-placement$='Left'] {
+    left: 0;
+  }
+
+  &[data-placement$='Right'] {
+    right: 0;
+  }
+}
+
+.title {
+  flex-shrink: 0;
+  padding: $space-3 $panel-padding-x;
+  color: $color-text-muted;
+  font-size: 12px;
+  font-weight: $font-weight-semibold;
+}
+
+.body {
+  min-height: 0;
+  max-height: min(380px, calc(100vh - 180px));
+  padding: 0 $panel-padding-x $space-3;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  // No heading: the content starts at the top edge.
+  &:first-child {
+    padding-top: $space-3;
+  }
+
+  &:empty {
+    padding-block: 0;
+  }
+}
+
+.footer {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2;
+  min-height: 44px;
+  padding: $space-2 $space-3;
+  border-top: $border-width solid $color-border-subtle;
+}

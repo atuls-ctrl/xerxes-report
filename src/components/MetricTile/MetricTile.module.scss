@@ -1,0 +1,125 @@
+@use '../../styles' as *;
+
+$tile-radius: 10px;
+$tile-padding-x: 14px;
+$dot-size: 8px;
+$chart-width: 96px;
+$value-font-size: 24px;
+$badge-font-size: 12px;
+$badge-radius: 5px;
+
+// Badge colors per status. The sparkline colors live in the component.
+$color-high-bg: #e7f6e7;
+$color-high-text: #067306;
+$color-low-bg: #fce9e9;
+$color-low-text: #b42323;
+
+.root {
+  --tile-badge-bg: #{$color-surface-hover};
+  --tile-badge-color: #{$color-text-muted};
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 13px $tile-padding-x $space-3;
+  border: $border-width solid $color-border-subtle;
+  border-radius: $tile-radius;
+  background: $color-white;
+  box-shadow: $shadow-xs;
+  color: $color-text;
+  font-family: $font-family-base;
+  line-height: $line-height-tight;
+
+  &[data-status='high'] {
+    --tile-badge-bg: #{$color-high-bg};
+    --tile-badge-color: #{$color-high-text};
+  }
+
+  &[data-status='low'] {
+    --tile-badge-bg: #{$color-low-bg};
+    --tile-badge-color: #{$color-low-text};
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.dot {
+  flex-shrink: 0;
+  width: $dot-size;
+  height: $dot-size;
+  border-radius: 50%;
+}
+
+.label {
+  min-width: 0;
+  overflow: hidden;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.content {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $space-4;
+  min-width: 0;
+  margin-top: 3px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-1;
+  min-width: 0;
+}
+
+.value {
+  max-width: 100%;
+  overflow: hidden;
+  font-size: $value-font-size;
+  font-weight: $font-weight-semibold;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  max-width: 100%;
+  padding: 1px 6px;
+  border-radius: $badge-radius;
+  background: var(--tile-badge-bg);
+  color: var(--tile-badge-color);
+  font-size: $badge-font-size;
+  font-weight: $font-weight-semibold;
+  white-space: nowrap;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+// The sparkline gives way first when the tile gets narrow.
+.chart {
+  flex: 0 1000 $chart-width;
+  min-width: 0;
+  overflow: hidden;
+}
