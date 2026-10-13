@@ -1,22 +1,6 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import styles from './Button.module.scss'
 
-function cssClass(
-  name: 'root' | 'icon' | 'label' | 'suffix' | 'badge',
-): string {
-  const value = styles[name]
-  if (value === undefined) {
-    throw new Error(`Missing CSS module class "${name}"`)
-  }
-  return value
-}
-
-const rootClass = cssClass('root')
-const iconClass = cssClass('icon')
-const labelClass = cssClass('label')
-const suffixClass = cssClass('suffix')
-const badgeClass = cssClass('badge')
-
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'dashed'
 export type ButtonSize = 'sm' | 'md' | 'lg'
 export type ButtonIconPosition = 'start' | 'end'
@@ -54,7 +38,7 @@ export function Button({
   const isIconOnly = icon !== undefined && !hasLabel
   const hasBadge = badge !== undefined && badge !== null && badge !== false
 
-  const classes = [rootClass, className].filter(Boolean).join(' ')
+  const classes = [styles.root, className].filter(Boolean).join(' ')
 
   return (
     <button
@@ -68,13 +52,13 @@ export function Button({
       data-icon-position={iconPosition}
     >
       {icon !== undefined && (
-        <span className={iconClass} aria-hidden="true">
+        <span className={styles.icon} aria-hidden="true">
           {icon}
         </span>
       )}
-      {hasLabel && <span className={labelClass}>{children}</span>}
-      {suffix !== undefined && <span className={suffixClass}>{suffix}</span>}
-      {hasBadge && <span className={badgeClass}>{badge}</span>}
+      {hasLabel && <span className={styles.label}>{children}</span>}
+      {suffix !== undefined && <span className={styles.suffix}>{suffix}</span>}
+      {hasBadge && <span className={styles.badge}>{badge}</span>}
     </button>
   )
 }

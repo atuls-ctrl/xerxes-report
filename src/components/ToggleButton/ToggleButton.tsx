@@ -7,18 +7,6 @@ import {
 } from 'react'
 import styles from './ToggleButton.module.scss'
 
-function cssClass(name: 'root' | 'track' | 'thumb' | 'label'): string {
-  const value = styles[name]
-  if (value === undefined) {
-    throw new Error(`Missing CSS module class "${name}"`)
-  }
-  return value
-}
-
-const rootClass = cssClass('root')
-const trackClass = cssClass('track')
-const thumbClass = cssClass('thumb')
-const labelClass = cssClass('label')
 
 export type ToggleButtonSize = 'sm' | 'md' | 'lg'
 export type ToggleButtonLabelPosition = 'start' | 'end'
@@ -112,7 +100,7 @@ export function ToggleButton({
   if (inactiveColor) cssVars['--toggle-inactive-color'] = inactiveColor
   if (thumbColor) cssVars['--toggle-thumb-color'] = thumbColor
 
-  const classes = [rootClass, className].filter(Boolean).join(' ')
+  const classes = [styles.root, className].filter(Boolean).join(' ')
 
   return (
     <button
@@ -129,10 +117,10 @@ export function ToggleButton({
       data-label-position={labelPosition}
       onClick={handleClick}
     >
-      <span className={trackClass} aria-hidden="true">
-        <span className={thumbClass} />
+      <span className={styles.track} aria-hidden="true">
+        <span className={styles.thumb} />
       </span>
-      {label !== undefined && <span className={labelClass}>{label}</span>}
+      {label !== undefined && <span className={styles.label}>{label}</span>}
     </button>
   )
 }
