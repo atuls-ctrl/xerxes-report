@@ -30,8 +30,8 @@ export const AllIcons: Story = {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: 'repeat(auto-fill, minmax(12rem, 1fr))',
-        gap: '1.6rem',
+        gridTemplateColumns: 'repeat(auto-fill, minmax(8rem, 1fr))',
+        gap: '0.8rem',
       }}
     >
       {ICON_NAMES.map((name) => (
@@ -40,9 +40,10 @@ export const AllIcons: Story = {
           style={{
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'center',
             alignItems: 'center',
+            padding: '0.8rem',
             gap: '0.8rem',
-            padding: '1.6rem',
             border: '1px solid var(--color-border, #e5e7eb)',
             borderRadius: '0.8rem',
             background: 'var(--color-white, #fff)',

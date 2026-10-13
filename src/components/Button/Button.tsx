@@ -27,7 +27,7 @@ export interface ButtonProps extends NativeButtonProps {
   /** Color theme. `dashed` is the quiet "Add filter" style. */
   variant?: ButtonVariant
   size?: ButtonSize
-  /** Icon node, e.g. `<ShareIcon />`. Without `children` the button is icon only. */
+  /** Icon node, e.g. `<Icon name="react" />`. Without `children` the button is icon only. */
   icon?: ReactNode
   iconPosition?: ButtonIconPosition
   /** Muted text after the label, e.g. a count. */

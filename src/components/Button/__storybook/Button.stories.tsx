@@ -2,29 +2,11 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import type { ReactNode } from 'react'
 import { fn } from 'storybook/test'
 import { Button } from '../Button'
-import {
-  BellIcon,
-  BookmarkIcon,
-  ChevronUpIcon,
-  ColumnsIcon,
-  DownloadIcon,
-  FilterIcon,
-  MenuIcon,
-  MoonIcon,
-  ShareIcon,
-} from '../icons'
+import { Icon } from '../../icons'
 
 const iconOptions = {
   none: undefined,
-  share: <ShareIcon />,
-  download: <DownloadIcon />,
-  bookmark: <BookmarkIcon />,
-  moon: <MoonIcon />,
-  bell: <BellIcon />,
-  chevronUp: <ChevronUpIcon />,
-  columns: <ColumnsIcon />,
-  menu: <MenuIcon />,
-  filter: <FilterIcon />,
+  react: <Icon name="react" />,
 }
 
 const meta = {
@@ -35,7 +17,7 @@ const meta = {
     children: 'Share',
     variant: 'secondary',
     size: 'md',
-    icon: <ShareIcon />,
+    icon: <Icon name="react" />,
     iconPosition: 'start',
     disabled: false,
     onClick: fn(),
@@ -83,28 +65,28 @@ export const TextOnly: Story = {
 }
 
 export const TextWithIcon: Story = {
-  args: { icon: <DownloadIcon />, children: 'Export' },
+  args: { icon: <Icon name="react" />, children: 'Export' },
 }
 
 export const IconRight: Story = {
-  args: { icon: <ChevronUpIcon />, iconPosition: 'end', children: 'Collapse' },
+  args: { icon: <Icon name="react" />, iconPosition: 'end', children: 'Collapse' },
 }
 
 export const IconOnly: Story = {
   args: {
-    icon: <MoonIcon />,
+    icon: <Icon name="react" />,
     children: undefined,
     'aria-label': 'Switch theme',
   },
 }
 
 export const WithSuffix: Story = {
-  args: { icon: <ColumnsIcon />, children: 'Columns', suffix: '19 of 138' },
+  args: { icon: <Icon name="react" />, children: 'Columns', suffix: '19 of 138' },
 }
 
 export const IconWithBadge: Story = {
   args: {
-    icon: <BellIcon />,
+    icon: <Icon name="react" />,
     children: undefined,
     badge: 6,
     'aria-label': 'Alerts, 6 new',
@@ -115,7 +97,7 @@ export const IconWithBadge: Story = {
 export const Primary: Story = {
   args: {
     variant: 'primary',
-    icon: <BookmarkIcon />,
+    icon: <Icon name="react" />,
     children: 'Save as report',
   },
 }
@@ -127,7 +109,7 @@ export const Secondary: Story = {
 export const Ghost: Story = {
   args: {
     variant: 'ghost',
-    icon: <ChevronUpIcon />,
+    icon: <Icon name="react" />,
     children: undefined,
     'aria-label': 'Hide chart',
   },
@@ -137,7 +119,7 @@ export const Dashed: Story = {
   args: {
     variant: 'dashed',
     size: 'sm',
-    icon: <FilterIcon />,
+    icon: <Icon name="react" />,
     children: 'Add filter',
   },
 }
@@ -145,16 +127,16 @@ export const Dashed: Story = {
 export const Colors: Story = {
   render: (args) => (
     <div style={row}>
-      <Button {...args} variant="primary" icon={<BookmarkIcon />}>
+      <Button {...args} variant="primary" icon={<Icon name="react" />}>
         Primary
       </Button>
-      <Button {...args} variant="secondary" icon={<ShareIcon />}>
+      <Button {...args} variant="secondary" icon={<Icon name="react" />}>
         Secondary
       </Button>
-      <Button {...args} variant="ghost" icon={<MenuIcon />}>
+      <Button {...args} variant="ghost" icon={<Icon name="react" />}>
         Ghost
       </Button>
-      <Button {...args} variant="dashed" icon={<FilterIcon />}>
+      <Button {...args} variant="dashed" icon={<Icon name="react" />}>
         Dashed
       </Button>
     </div>
@@ -171,11 +153,11 @@ export const Sizes: Story = {
             {...args}
             size={size}
             variant="primary"
-            icon={<BookmarkIcon />}
+            icon={<Icon name="react" />}
           >
             Save ({size})
           </Button>
-          <Button {...args} size={size} icon={<ShareIcon />}>
+          <Button {...args} size={size} icon={<Icon name="react" />}>
             Share ({size})
           </Button>
           <Button {...args} size={size}>
@@ -184,7 +166,7 @@ export const Sizes: Story = {
           <Button
             {...args}
             size={size}
-            icon={<MoonIcon />}
+            icon={<Icon name="react" />}
             aria-label={`Theme (${size})`}
           >
             {undefined}
@@ -216,7 +198,7 @@ export const States: Story = {
           <Button
             {...args}
             variant={variant}
-            icon={<MoonIcon />}
+            icon={<Icon name="react" />}
             aria-label="Icon default"
           >
             {undefined}
@@ -224,7 +206,7 @@ export const States: Story = {
           <Button
             {...args}
             variant={variant}
-            icon={<MoonIcon />}
+            icon={<Icon name="react" />}
             aria-label="Icon disabled"
             disabled
           >
@@ -234,5 +216,5 @@ export const States: Story = {
       ))}
     </div>
   ),
-  args: { icon: <ShareIcon /> },
+  args: { icon: <Icon name="react" /> },
 }
