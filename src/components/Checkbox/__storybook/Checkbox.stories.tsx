@@ -28,12 +28,16 @@ const meta = {
     errorMessage: { control: 'text' },
     badge: { control: 'text' },
   },
+  // Single rows render at the Figma row width; `padded` grid stories opt out.
   decorators: [
-    (Story) => (
-      <div style={{ width: 241 }}>
+    (Story, { parameters }) =>
+      parameters.layout === 'padded' ? (
         <Story />
-      </div>
-    ),
+      ) : (
+        <div style={{ width: 241 }}>
+          <Story />
+        </div>
+      ),
   ],
 } satisfies Meta<typeof Checkbox>
 
@@ -73,14 +77,6 @@ function Cell({
   )
 }
 
-const wide = [
-  (Story: () => ReactNode) => (
-    <div style={{ width: 'max-content' }}>
-      <Story />
-    </div>
-  ),
-]
-
 export const Default: Story = {}
 
 export const Checked: Story = {
@@ -102,7 +98,7 @@ export const EmptyBadgeSlot: Story = {
 
 // Mirrors the Figma frame. Hover rows: hover them; focus: press Tab.
 export const FigmaRows: Story = {
-  decorators: wide,
+  parameters: { layout: 'padded' },
   render: (args) => (
     <div style={grid}>
       <Cell title="Checkbox row" state="unchecked">
@@ -144,7 +140,7 @@ export const DayButtonSelected: Story = {
 
 export const FigmaDayButtons: Story = {
   args: { variant: 'button' },
-  decorators: wide,
+  parameters: { layout: 'padded' },
   render: (args) => (
     <div style={{ display: 'flex', gap: 72 }}>
       <Cell title="Day button" state="default">
@@ -216,21 +212,31 @@ export const DisabledChecked: Story = {
 }
 
 export const States: Story = {
-  decorators: wide,
+  parameters: { layout: 'padded' },
   render: (args) => (
-    <div style={grid}>
-      <Checkbox {...args} label="Unchecked" />
-      <Checkbox {...args} label="Checked" defaultChecked />
-      <Checkbox {...args} label="Indeterminate" indeterminate />
-      <Checkbox {...args} label="Required" required />
-      <Checkbox {...args} label="Disabled" disabled />
-      <Checkbox {...args} label="Disabled, checked" disabled defaultChecked />
-      <Checkbox {...args} label="Disabled, mixed" disabled indeterminate />
-      <Checkbox {...args} label="Invalid" errorMessage="Required." />
-      <Checkbox {...args} variant="button" label="D1" />
-      <Checkbox {...args} variant="button" label="D2" defaultChecked />
-      <Checkbox {...args} variant="button" label="D3" disabled />
-      <Checkbox {...args} variant="button" label="D4" disabled defaultChecked />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+      <div style={grid}>
+        <Checkbox {...args} label="Unchecked" />
+        <Checkbox {...args} label="Checked" defaultChecked />
+        <Checkbox {...args} label="Indeterminate" indeterminate />
+        <Checkbox {...args} label="Required" required />
+        <Checkbox {...args} label="Disabled" disabled />
+        <Checkbox {...args} label="Disabled, checked" disabled defaultChecked />
+        <Checkbox {...args} label="Disabled, mixed" disabled indeterminate />
+        <Checkbox {...args} label="Invalid" errorMessage="Required." />
+      </div>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <Checkbox {...args} variant="button" label="D1" />
+        <Checkbox {...args} variant="button" label="D2" defaultChecked />
+        <Checkbox {...args} variant="button" label="D3" disabled />
+        <Checkbox
+          {...args}
+          variant="button"
+          label="D4"
+          disabled
+          defaultChecked
+        />
+      </div>
     </div>
   ),
 }

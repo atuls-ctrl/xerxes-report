@@ -1,6 +1,6 @@
 import {
-  useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   type InputHTMLAttributes,
   type ReactNode,
@@ -74,8 +74,9 @@ export function Checkbox({
   const hasDescription = isRow && isPresent(description)
   const hasBadge = isRow && badge !== undefined && badge !== null
 
-  // `indeterminate` has no HTML attribute; it is set on the DOM node.
-  useEffect(() => {
+  // `indeterminate` has no HTML attribute; it is set on the DOM node before
+  // paint so the box never flashes empty.
+  useLayoutEffect(() => {
     if (inputRef.current) inputRef.current.indeterminate = indeterminate
   }, [indeterminate])
 
