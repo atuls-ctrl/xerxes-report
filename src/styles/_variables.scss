@@ -15,10 +15,18 @@ $color-border-strong: #8a94a6;
 $color-border-subtle: rgba(16, 24, 40, 0.1);
 
 $color-primary: #2a78d6;
+// Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
+$color-primary-soft: rgba($color-primary, 0.1);
 $color-danger: #d03b3b;
+// Status dots: healthy / connected.
+$color-success: #1baf7a;
+// Status dots: needs user action (re-auth, manual import).
+$color-warning: #f59e0b;
 
 // Focus ring: primary at 40% so it works on white and on the page background.
 $color-focus-ring: rgba(42, 120, 214, 0.4);
+
+$color-line: #E6E8EC;
 
 // ---- Spacing (4px base) ----------------------------------------------------
 $space-1: 4px;
@@ -49,7 +57,8 @@ $font-weight-regular: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 
-$font-size-2xs: 10px;
+$font-size-3xs: 10px;
+$font-size-2xs: 11px;
 $font-size-xs: 12.5px;
 $font-size-sm: 13px;
 $font-size-md: 14px;

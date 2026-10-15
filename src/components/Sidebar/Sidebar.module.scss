@@ -1,0 +1,303 @@
+@use '../../styles' as *;
+
+$sidebar-width: 240px;
+$sidebar-width-collapsed: 64px;
+$sidebar-duration: 0.2s;
+$nav-padding-x: $space-3;
+$item-height: 36px;
+$item-icon-size: 18px;
+$item-gap: $space-3;
+$active-bar-width: 3px;
+$active-bar-height: 20px;
+$mark-size: 28px;
+$dot-size: 6px;
+
+// Layout: brand row, scrollable nav, pinned footer. The width drives the
+// AppLayout column, so the content area animates with the rail.
+.root {
+  --sidebar-width: #{$sidebar-width};
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: var(--sidebar-width);
+  height: 100%;
+  // 0 so the AppLayout `auto` column can shrink to the collapsed width.
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  border-inline-end: $border-width solid $color-border;
+  background: $color-white;
+  color: $color-text;
+  font-family: $font-family-base;
+  line-height: $line-height-tight;
+  transition: width $sidebar-duration $transition-easing;
+
+  &[data-collapsed='true'] {
+    --sidebar-width: #{$sidebar-width-collapsed};
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+}
+
+// ---- Brand -----------------------------------------------------------------
+.brand {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-4 $space-4 $space-2;
+  border-bottom: 1px solid $color-line;
+}
+
+.mark {
+  @include icon-box($mark-size);
+
+  color: $color-primary;
+}
+
+.brandText {
+  flex: 1;
+  min-width: 0;
+}
+
+.productName,
+.workspace {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.productName {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+}
+
+.workspace {
+  color: $color-text-subtle;
+  font-size: 11.5px;
+}
+
+// Collapsed: logo above the toggle. The `Line` below `.brand` separates nav.
+.root[data-collapsed='true'] .brand {
+  flex-direction: column;
+  gap: $space-2;
+  padding-inline: 0;
+  padding-bottom: $space-4;
+}
+
+.root[data-collapsed='true'] .brandText {
+  display: none;
+}
+
+// ---- Nav -------------------------------------------------------------------
+.nav {
+  flex: 1;
+  min-height: 0;
+  padding: $space-4 $nav-padding-x;
+  overflow: hidden auto;
+  overscroll-behavior: contain;
+}
+
+.section + .section {
+  margin-top: $space-5;
+}
+
+// Shared by nav sections and the data-sources footer.
+.sectionLabel {
+  margin: 0 0 $space-2;
+  padding-inline: $space-3;
+  color: $color-text-subtle;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.empty {
+  margin: 0;
+  padding-inline: $space-3;
+  color: $color-text-subtle;
+  font-size: $font-size-xs;
+}
+
+.list,
+.children {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.children {
+  margin-top: 2px;
+  // Child text lines up with the parent label, past its icon.
+  padding-inline-start: $item-icon-size + $item-gap;
+}
+
+// A row: `<a>` for links, `<button>` for groups.
+.item {
+  @include reset-button;
+  @include interactive-transition;
+  @include focus-ring;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $item-gap;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: $item-height;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  color: $color-text;
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+
+  @include hover {
+    background: $color-surface-hover;
+  }
+}
+
+.itemIcon {
+  @include icon-box($item-icon-size);
+
+  color: $color-text-muted;
+}
+
+.itemLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Top-level row for the current page, or a group holding it: blue text and a
+// bar on the sidebar's left edge (the bar sits in the nav padding).
+.item[data-active='true'],
+.item[aria-current='page']:not(.child) {
+  color: $color-primary;
+
+  .itemIcon {
+    color: inherit;
+  }
+
+  &::before {
+    position: absolute;
+    top: 50%;
+    left: -$nav-padding-x;
+    width: $active-bar-width;
+    height: $active-bar-height;
+    border-radius: 0 $active-bar-width $active-bar-width 0;
+    background: $color-primary;
+    content: '';
+    transform: translateY(-50%);
+  }
+}
+
+// Nested link: lighter text; the current page gets a tinted pill.
+.child {
+  min-height: 32px;
+  color: $color-text-muted;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
+
+  &[aria-current='page'] {
+    color: $color-primary;
+    font-weight: $font-weight-medium;
+
+    // Keep the pill on hover instead of the generic gray row fill.
+    &,
+    &:hover {
+      background: $color-primary-soft;
+    }
+  }
+}
+
+// Collapsed: icon-only rows. Labels stay in the accessibility tree so each
+// row keeps its accessible name; empty copy and nested links are hidden.
+.root[data-collapsed='true'] {
+  .section + .section {
+    margin-top: 2px;
+  }
+
+  .sectionLabel,
+  .empty,
+  .children {
+    display: none;
+  }
+
+  .item {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  .itemLabel {
+    @include visually-hidden;
+  }
+}
+
+// ---- Data sources ----------------------------------------------------------
+.sources {
+  flex-shrink: 0;
+  padding: $space-4 $nav-padding-x $space-5;
+  border-top: $border-width solid $color-border-subtle;
+}
+
+.root[data-collapsed='true'] .sources {
+  display: none;
+}
+
+.sourceList {
+  display: grid;
+  gap: $space-2;
+  margin: 0;
+  padding: 0 $space-3;
+  list-style: none;
+}
+
+.source {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  font-size: 12px;
+}
+
+.dot {
+  flex-shrink: 0;
+  width: $dot-size;
+  height: $dot-size;
+  border-radius: $radius-pill;
+  background: $color-success;
+
+  &[data-status='attention'] {
+    background: $color-warning;
+  }
+}
+
+.sourceName {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceDetail {
+  flex-shrink: 0;
+  color: $color-text-subtle;
+  white-space: nowrap;
+  font-size: 11.5px;
+}
+
+// Status in words, so color is not the only signal.
+.srOnly {
+  @include visually-hidden;
+}

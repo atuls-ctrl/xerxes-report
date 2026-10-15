@@ -1,0 +1,19 @@
+@use '../../styles' as *;
+
+.root {
+  flex-shrink: 0;
+  margin: 0;
+  border: 0;
+  background: $color-border-subtle;
+
+  &[data-orientation='horizontal'] {
+    width: 100%;
+    height: $border-width;
+  }
+
+  &[data-orientation='vertical'] {
+    width: $border-width;
+    height: auto;
+    align-self: stretch;
+  }
+}

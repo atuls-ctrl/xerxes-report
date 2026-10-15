@@ -110,12 +110,7 @@ $color-low-text: #b42323;
 }
 
 .srOnly {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
+  @include visually-hidden;
 }
 
 // The sparkline only takes the room the value leaves, so it gives way first

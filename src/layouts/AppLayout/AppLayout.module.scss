@@ -2,18 +2,13 @@
 
 .root {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  // The sidebar sets its own width (240 / 64px); this column follows it.
+  grid-template-columns: auto 1fr;
   height: 100svh;
   overflow: hidden;
   background: $color-page;
   color: $color-text;
   font-family: $font-family-base;
-
-  > aside {
-    border-right: $border-width solid $color-border;
-    background: $color-white;
-    overflow-y: auto;
-  }
 }
 
 .body {

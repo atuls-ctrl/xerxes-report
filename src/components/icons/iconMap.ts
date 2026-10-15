@@ -12,8 +12,12 @@ import HandshakeIcon from '../../assets/icons/handshake.svg?react';
 import LayersIcon from '../../assets/icons/layers.svg?react';
 import LeftIcon from '../../assets/icons/left.svg?react';
 import LinechartIcon from '../../assets/icons/linechart.svg?react';
+import LinkIcon from '../../assets/icons/link.svg?react';
 import LogoutIcon from '../../assets/icons/logout.svg?react';
+// Product logo: filled tile in `currentColor` with a white X.
+// import MarkIcon from '../../assets/icons/mark.svg?react';
 import MenuIcon from '../../assets/icons/menu.svg?react';
+import PanelIcon from '../../assets/icons/panel.svg?react';
 import PencilIcon from '../../assets/icons/pencil.svg?react';
 import PhoneIcon from '../../assets/icons/phone.svg?react';
 import PlusIcon from '../../assets/icons/plus.svg?react';
@@ -28,6 +32,7 @@ import TrashIcon from '../../assets/icons/trash.svg?react';
 import TrendIcon from '../../assets/icons/trend.svg?react';
 import UsersIcon from '../../assets/icons/users.svg?react';
 import WandIcon from '../../assets/icons/wand.svg?react';
+import PhoneOutlineIcon from '../../assets/icons/phoneOutline.svg?react';
 
 export const svgMap = {
   alert: AlertIcon,
@@ -44,8 +49,11 @@ export const svgMap = {
   layers: LayersIcon,
   left: LeftIcon,
   linechart: LinechartIcon,
+  link: LinkIcon,
   logout: LogoutIcon,
+  // mark: MarkIcon,
   menu: MenuIcon,
+  panel: PanelIcon,
   pencil: PencilIcon,
   phone: PhoneIcon,
   plus: PlusIcon,
@@ -60,6 +68,7 @@ export const svgMap = {
   trend: TrendIcon,
   users: UsersIcon,
   wand: WandIcon,
+  phoneOutline: PhoneOutlineIcon,
 };
 
 /** Raster brand/platform logos under `src/assets/images` (keys match filenames). */

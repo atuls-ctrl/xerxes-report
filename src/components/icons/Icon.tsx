@@ -7,6 +7,8 @@ type IconProps = {
   name: IconKey;
   /** Square size in px. Explicit `width`/`height` override it. */
   size?: IconSize;
+  /** Stroke width in px. */
+  strokeWidth?: number;
   /** Used when rendering a raster/image icon. Ignored for SVGs. */
   alt?: string;
 } & Omit<SVGProps<SVGSVGElement>, 'name'>;
@@ -19,11 +21,12 @@ const sharedStyle = (
   ...style,
 });
 
-const Icon = ({ name, size, alt = '', ...rest }: IconProps) => {
+const Icon = ({ name, size, strokeWidth = 1.5, alt = '', ...rest }: IconProps) => {
   const props = {
     ...rest,
     width: rest.width ?? size,
     height: rest.height ?? size,
+    strokeWidth
   };
 
   if (isImageKey(name)) {
@@ -48,7 +51,7 @@ const Icon = ({ name, size, alt = '', ...rest }: IconProps) => {
   return <SvgComponent {...props} style={{
     display:"block",
     verticalAlign:"middle",
-    strokeWidth: 1.5,
+    strokeWidth,
     ...props.style,
   }}/>;
 };

@@ -81,6 +81,17 @@
   }
 }
 
+// Hides content visually but keeps it in the accessibility tree
+// (screen-reader-only labels, status text behind a color dot).
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 // Centers a fixed-size icon box and lets its svg fill it.
 @mixin icon-box($size: 16px) {
   display: inline-flex;
