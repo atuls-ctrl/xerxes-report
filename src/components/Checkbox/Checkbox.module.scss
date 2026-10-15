@@ -1,0 +1,256 @@
+@use '../../styles' as *;
+
+// Figma "Checkbox row (group-by / filter value lists)".
+$box-size: 15px;
+$box-radius: 4px;
+$row-height: 34px;
+$row-padding-x: 9px;
+$row-radius: 6px;
+$row-gap: 9px;
+// White tick: a 9 x 6 "L" turned -45deg, nudged up to sit optically centred.
+$tick-width: 9px;
+$tick-height: 6px;
+$tick-stroke: 2px;
+$dash-width: 8px;
+$badge-size: 20px;
+$badge-radius: 5px;
+$badge-bg: #e8f1fc;
+$caption-font-size: 12px;
+$caption-line-height: 1.3; // 15.6 / 12
+
+// Figma "Day button" (multiple button checkbox).
+$button-min-width: 73px;
+$button-height: 32px;
+$button-padding-x: $space-4;
+
+.root {
+  --checkbox-accent: #{$color-primary};
+  --checkbox-border: #{$color-border};
+  --checkbox-message-color: #{$color-text-subtle};
+
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  font-family: $font-family-base;
+
+  &[data-invalid] {
+    --checkbox-border: #{$color-danger};
+    --checkbox-message-color: #{$color-danger};
+  }
+}
+
+// The native checkbox stays in the page for keyboard, forms and screen
+// readers; the box and the button are drawn from its state.
+.input {
+  @include visually-hidden;
+
+  margin: 0;
+}
+
+.control {
+  @include interactive-transition;
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: $row-gap;
+  box-sizing: border-box;
+  min-height: $row-height;
+  padding: 0 $row-padding-x;
+  border-radius: $row-radius;
+  color: $color-text;
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    background: $color-surface-hover;
+  }
+
+  .root[data-disabled] & {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+
+  // With a description the box lines up with the first line.
+  &:has(.description) {
+    align-items: flex-start;
+    padding-block: $space-2;
+  }
+}
+
+// ---- Row: box --------------------------------------------------------------
+.box {
+  @include interactive-transition;
+
+  position: relative;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  width: $box-size;
+  height: $box-size;
+  border: $border-width solid var(--checkbox-border);
+  border-radius: $box-radius;
+  background: transparent;
+
+  .control:has(.description) & {
+    margin-top: calc(($line-height-tight * 1em - #{$box-size}) / 2);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    box-sizing: border-box;
+    width: $tick-width;
+    height: $tick-height;
+    border-bottom: $tick-stroke solid $color-white;
+    border-left: $tick-stroke solid $color-white;
+    opacity: 0;
+    transform: translate(calc(-50% + 0.5px), calc(-50% - 1.5px)) rotate(-45deg);
+  }
+
+  .input:checked + &,
+  .input:indeterminate + & {
+    border-color: var(--checkbox-accent);
+    background: var(--checkbox-accent);
+
+    &::after {
+      opacity: 1;
+    }
+  }
+
+  .input:indeterminate + &::after {
+    width: $dash-width;
+    height: $tick-stroke;
+    border: 0;
+    border-radius: 1px;
+    background: $color-white;
+    transform: translate(-50%, -50%);
+  }
+
+  .input:focus-visible + & {
+    box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+  }
+}
+
+// ---- Row: text and badge ---------------------------------------------------
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+
+  .input:checked ~ & {
+    color: var(--checkbox-accent);
+  }
+}
+
+.label {
+  font-weight: $font-weight-regular;
+}
+
+.required {
+  margin-inline-start: 2px;
+  color: $color-danger;
+}
+
+.description {
+  color: $color-text-subtle;
+  font-size: $caption-font-size;
+  line-height: $caption-line-height;
+}
+
+.badge {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: $badge-size;
+  height: $badge-size;
+  margin-inline-start: auto;
+  padding-inline: $space-1;
+  border-radius: $badge-radius;
+  background: $badge-bg;
+  color: $color-primary;
+  font-size: $font-size-2xs;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+}
+
+.message {
+  padding-inline: $row-padding-x;
+  color: var(--checkbox-message-color);
+  font-size: $caption-font-size;
+  line-height: $caption-line-height;
+}
+
+// ---- Button variant --------------------------------------------------------
+.root[data-variant='button'] {
+  display: inline-flex;
+  vertical-align: middle;
+
+  .control {
+    justify-content: center;
+    min-width: $button-min-width;
+    height: $button-height;
+    min-height: 0;
+    padding: 0 $button-padding-x;
+    border: $border-width solid var(--checkbox-border);
+    border-radius: $radius-sm;
+    background: $color-white;
+    color: $color-text-muted;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    white-space: nowrap;
+
+    // Hover and pressed share one look in Figma.
+    &:hover,
+    &:active {
+      border-color: $color-border-strong;
+      background: $color-white;
+      color: $color-text;
+    }
+
+    &:has(.input:checked) {
+      border-color: var(--checkbox-accent);
+      background: var(--checkbox-accent);
+      color: $color-white;
+    }
+
+    &:has(.input:focus-visible) {
+      box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+    }
+  }
+
+  &[data-disabled] .control:hover {
+    border-color: var(--checkbox-border);
+    color: $color-text-muted;
+  }
+
+  &[data-disabled] .control:has(.input:checked):hover {
+    border-color: var(--checkbox-accent);
+    background: var(--checkbox-accent);
+    color: $color-white;
+  }
+
+  .text {
+    flex: none;
+    color: inherit;
+  }
+
+  .label {
+    font-weight: inherit;
+  }
+
+  .message {
+    padding-inline: 0;
+  }
+}

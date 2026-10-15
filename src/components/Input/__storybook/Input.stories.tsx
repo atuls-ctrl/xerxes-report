@@ -65,7 +65,12 @@ type Story = StoryObj<typeof meta>
 
 const column = { display: 'flex', flexDirection: 'column', gap: 24 } as const
 const row = { display: 'flex', alignItems: 'flex-start', gap: 74 } as const
-const caption = { fontSize: 12, color: '#475467', fontWeight: 600 } as const
+const caption = {
+  fontFamily: 'Outfit, system-ui, sans-serif',
+  fontSize: 12,
+  color: '#475467',
+  fontWeight: 600,
+} as const
 
 function Cell({ title, children }: { title: string; children: ReactNode }) {
   return (
