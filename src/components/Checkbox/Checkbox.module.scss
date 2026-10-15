@@ -7,9 +7,10 @@ $row-height: 34px;
 $row-padding-x: 9px;
 $row-radius: 6px;
 $row-gap: 9px;
-// White tick: a 9 x 6 "L" turned -45deg, nudged up to sit optically centred.
-$tick-width: 9px;
-$tick-height: 6px;
+// White tick: an SVG whose path is centred in its viewBox, so it sits in the
+// middle of the box without hand-tuned offsets.
+$tick-size: 11px;
+$tick-icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2.5 6 5 8.5 9.5 3.5'/%3E%3C/svg%3E");
 $tick-stroke: 2px;
 $dash-width: 8px;
 $badge-size: 20px;
@@ -107,13 +108,11 @@ $button-padding-x: $space-4;
     position: absolute;
     top: 50%;
     left: 50%;
-    box-sizing: border-box;
-    width: $tick-width;
-    height: $tick-height;
-    border-bottom: $tick-stroke solid $color-white;
-    border-left: $tick-stroke solid $color-white;
+    width: $tick-size;
+    height: $tick-size;
+    background: $tick-icon center / contain no-repeat;
     opacity: 0;
-    transform: translate(calc(-50% + 0.5px), calc(-50% - 1.5px)) rotate(-45deg);
+    transform: translate(-50%, -50%);
   }
 
   .input:checked + &,
@@ -129,10 +128,8 @@ $button-padding-x: $space-4;
   .input:indeterminate + &::after {
     width: $dash-width;
     height: $tick-stroke;
-    border: 0;
     border-radius: 1px;
     background: $color-white;
-    transform: translate(-50%, -50%);
   }
 
   .input:focus-visible + & {
