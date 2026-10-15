@@ -1,0 +1,144 @@
+@use '../../styles' as *;
+
+// Figma "Segmented controls & toggles": 32px track with a 3px inset, 26px
+// segments, 12.5px medium text. Heights and paddings come from `$control-sizes`.
+$track-padding: 3px;
+$track-radius: 8px;
+$segment-gap: 2px;
+$segment-radius: 6px;
+// Icon-only segments are 4px wider than tall (30 x 26 at `md`).
+$icon-only-extra-width: 4px;
+$label-gap: $space-1;
+$caption-font-size: 12px;
+
+.root {
+  @include control-sizes(segmented);
+
+  --segmented-segment-height: calc(
+    var(--segmented-height) - #{2 * $track-padding}
+  );
+
+  display: inline-flex;
+  align-items: center;
+  gap: $label-gap;
+  max-width: 100%;
+  font-family: $font-family-base;
+  vertical-align: middle;
+
+  // Figma uses 12.5px at the default size.
+  &[data-size='md'] {
+    --segmented-font-size: #{$font-size-xs};
+  }
+
+  &[data-full-width] {
+    display: flex;
+    width: 100%;
+  }
+
+  &[data-disabled] {
+    opacity: $opacity-disabled;
+  }
+}
+
+.label {
+  flex-shrink: 0;
+  color: $color-text-subtle;
+  font-size: $caption-font-size;
+  line-height: $line-height-tight;
+}
+
+// Scrolls sideways instead of overflowing when there is not enough room
+// (e.g. the five-option metric picker on a narrow screen).
+.track {
+  display: inline-flex;
+  gap: $segment-gap;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  height: var(--segmented-height);
+  padding: $track-padding;
+  overflow-x: auto;
+  border-radius: $track-radius;
+  background: $color-surface-hover;
+  scrollbar-width: none;
+
+  .root[data-full-width] & {
+    flex: 1;
+  }
+}
+
+.segment {
+  @include reset-button;
+  @include interactive-transition;
+
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--segmented-gap) - 2px);
+  box-sizing: border-box;
+  height: var(--segmented-segment-height);
+  padding: 0 var(--segmented-padding-x);
+  border-radius: $segment-radius;
+  color: $color-text-muted;
+  font-size: var(--segmented-font-size);
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+  cursor: pointer;
+
+  .root[data-full-width] & {
+    flex: 1;
+  }
+
+  &[data-icon-only] {
+    min-width: calc(
+      var(--segmented-segment-height) + #{$icon-only-extra-width}
+    );
+    padding: 0;
+  }
+
+  // Hover and pressed share one look in Figma: darker text, no fill.
+  @include hover {
+    color: $color-text;
+  }
+
+  @include active {
+    color: $color-text;
+  }
+
+  &[aria-checked='true'] {
+    background: $color-white;
+    box-shadow: $shadow-xs;
+    color: $color-text;
+  }
+
+  // Inset ring so it stays inside the scrolling track.
+  &:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px $color-focus-ring;
+  }
+
+  &[aria-checked='true']:focus-visible {
+    box-shadow:
+      $shadow-xs,
+      inset 0 0 0 2px $color-focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    .root:not([data-disabled]) & {
+      opacity: $opacity-disabled;
+    }
+  }
+}
+
+.icon {
+  @include icon-box(var(--segmented-icon-size));
+}
+
+.visuallyHidden {
+  @include visually-hidden;
+}

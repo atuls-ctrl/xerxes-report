@@ -4,3 +4,9 @@ export type {
   ToggleButtonProps,
   ToggleButtonSize,
 } from './ToggleButton'
+export { ToggleButtonGroup } from './ToggleButtonGroup'
+export type {
+  ToggleButtonGroupOption,
+  ToggleButtonGroupProps,
+  ToggleButtonGroupSize,
+} from './ToggleButtonGroup'
