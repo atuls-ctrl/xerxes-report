@@ -6,6 +6,7 @@ import {
   ToggleButtonGroup,
   type ToggleButtonGroupOption,
 } from '../ToggleButtonGroup'
+import { colors } from '../../../styles/colors'
 
 const team: ToggleButtonGroupOption[] = [
   { value: 'supply', label: 'Supply' },
@@ -75,10 +76,10 @@ type Story = StoryObj<typeof meta>
 const caption = {
   fontFamily: 'Outfit, system-ui, sans-serif',
   fontSize: 12,
-  color: '#475467',
+  color: colors.textMuted,
   fontWeight: 600,
 } as const
-const muted = { color: '#8a94a6', fontWeight: 400 } as const
+const muted = { color: colors.textSubtle, fontWeight: 400 } as const
 
 function Cell({
   title,
@@ -298,7 +299,9 @@ export const NarrowContainer: Story = {
     'aria-label': undefined,
   },
   render: (args) => (
-    <div style={{ width: 280, border: '1px dashed #d0d5dd', padding: 8 }}>
+    <div
+      style={{ width: 280, border: `1px dashed ${colors.border}`, padding: 8 }}
+    >
       <ToggleButtonGroup {...args} />
     </div>
   ),

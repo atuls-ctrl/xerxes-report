@@ -21,6 +21,7 @@ import {
   type CampaignRow,
   type PublisherRow,
 } from './tableData'
+import { colors } from '../../../styles/colors'
 
 type CampaignTableProps = TableProps<CampaignRow>
 
@@ -208,7 +209,7 @@ export const RowSelection: Story = {
         {...args}
         dataSource={CAMPAIGNS.map(({ children: _children, ...row }) => row)}
         toolbar={
-          <span style={{ fontSize: 12.5, color: '#475467' }}>
+          <span style={{ fontSize: 12.5, color: colors.textMuted }}>
             {selected.length} selected
           </span>
         }
@@ -279,7 +280,7 @@ export const Pagination: Story = {
         dataSource={MANY_CAMPAIGNS}
         totalRow={{ ...CAMPAIGN_TOTALS, caption: '· 120 campaign rows' }}
         toolbar={
-          <span style={{ fontSize: 12.5, color: '#475467' }}>
+          <span style={{ fontSize: 12.5, color: colors.textMuted }}>
             Page {page} · {pageSize} rows per page
           </span>
         }

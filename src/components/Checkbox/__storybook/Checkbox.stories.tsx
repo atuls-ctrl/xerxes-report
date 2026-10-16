@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState, type ReactNode } from 'react'
 import { fn, userEvent, within } from 'storybook/test'
 import { Checkbox } from '../Checkbox'
+import { colors } from '../../../styles/colors'
 
 const meta = {
   title: 'Components/Checkbox',
@@ -47,10 +48,10 @@ type Story = StoryObj<typeof meta>
 const caption = {
   fontFamily: 'Outfit, system-ui, sans-serif',
   fontSize: 12,
-  color: '#475467',
+  color: colors.textMuted,
   fontWeight: 600,
 } as const
-const muted = { color: '#8a94a6', fontWeight: 400 } as const
+const muted = { color: colors.textSubtle, fontWeight: 400 } as const
 const grid = {
   display: 'grid',
   gridTemplateColumns: 'repeat(4, 241px)',

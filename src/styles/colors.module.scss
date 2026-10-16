@@ -1,0 +1,18 @@
+@use 'sass:list';
+@use 'colors' as *;
+
+// Hands the color tokens of `_colors.scss` to TypeScript (ICSS `:export`).
+// Import `src/styles/colors.ts`, not this file.
+:export {
+  white: $color-white;
+  primary: $color-primary;
+  text: $color-text;
+  textMuted: $color-text-muted;
+  textSubtle: $color-text-subtle;
+  border: $color-border;
+  danger: $color-danger;
+  success: $color-success;
+  warning: $color-warning;
+  positive: $color-positive;
+  chartSeries: list.join($color-chart-series, (), $separator: comma);
+}

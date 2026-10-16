@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { LineChart, type LineChartSeries } from '../LineChart'
+import { colors } from '../../../../styles/colors'
 
 const categories = [
   '5 Oct',
@@ -86,9 +87,9 @@ const meta = {
       <div
         style={{
           padding: 24,
-          border: '1px dashed #d0d5dd',
+          border: `1px dashed ${colors.border}`,
           borderRadius: 12,
-          background: '#fff',
+          background: colors.white,
         }}
       >
         <Story />
@@ -153,7 +154,13 @@ export const Smooth: Story = {
 
 export const CustomColors: Story = {
   args: {
-    colors: ['#aa3bff', '#101828', '#d03b3b', '#8a94a6', '#1baf7a'],
+    colors: [
+      '#aa3bff',
+      colors.text,
+      colors.danger,
+      colors.textSubtle,
+      colors.success,
+    ],
   },
 }
 
@@ -163,7 +170,7 @@ export const CustomOptions: Story = {
     options: {
       stroke: { dashArray: [0, 0, 0, 4, 0] },
       annotations: {
-        yaxis: [{ y: 90, borderColor: '#d03b3b', strokeDashArray: 4 }],
+        yaxis: [{ y: 90, borderColor: colors.danger, strokeDashArray: 4 }],
       },
     },
   },
@@ -183,7 +190,7 @@ export const Sparklines: Story = {
         <LineChart
           {...args}
           series={[{ name: 'Cost', data: [9, 6, 5, 3, 4, 7, 8] }]}
-          colors={['#d03b3b']}
+          colors={[colors.danger]}
           aria-label="Cost trend"
         />
       </div>
@@ -191,7 +198,7 @@ export const Sparklines: Story = {
         <LineChart
           {...args}
           series={[{ name: 'Revenue', data: [4, 2, 5, 2, 4, 8, 6] }]}
-          colors={['#1baf7a']}
+          colors={[colors.success]}
           aria-label="Revenue trend"
         />
       </div>

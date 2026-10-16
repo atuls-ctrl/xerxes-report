@@ -1,0 +1,99 @@
+// Every color used by the app. This is the single source of truth: components
+// read these through `@use '../../styles' as *;`, and TypeScript reads them
+// through `src/styles/colors.ts` (see `colors.module.scss`).
+//
+// Values come from the Figma file "Xerxes AI Reports". Before adding a color,
+// reuse an existing token if one has the same purpose. Shades that look alike
+// but mean different things (e.g. `$color-success` vs `$color-positive`) are
+// kept apart on purpose.
+
+// ---- Base ------------------------------------------------------------------
+$color-white: #fff;
+$color-black: #000;
+
+// ---- Brand / primary -------------------------------------------------------
+$color-primary: #2a78d6;
+// Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
+$color-primary-soft: rgba($color-primary, 0.1);
+// Count badge on a checkbox row.
+$color-primary-subtle: #e8f1fc;
+// Days between the start and end of a selected date range.
+$color-primary-range: rgba($color-primary, 0.12);
+
+// ---- Backgrounds & surfaces ------------------------------------------------
+// App canvas behind cards; also the table "Total" row.
+$color-page: #f4f5f7;
+// Hover fill for rows, buttons and menu items; neutral badges and tags.
+$color-surface-hover: #f2f4f7;
+
+// ---- Table row fills -------------------------------------------------------
+// Opaque so fixed (sticky) columns hide what scrolls under them.
+// Row selected / opened in a drawer.
+$color-row-active: #eaf2fd;
+// Highlighted column cells.
+$color-row-highlight: #f5f9fd;
+// Highlighted column cell in the "Total" row.
+$color-row-highlight-total: #e6ecf5;
+
+// ---- Text ------------------------------------------------------------------
+$color-text: #101828;
+$color-text-muted: #475467;
+$color-text-subtle: #8a94a6;
+$color-text-placeholder: #757575;
+
+// ---- Borders & dividers ----------------------------------------------------
+$color-border: #d0d5dd;
+// Hovered input border.
+$color-border-strong: #8a94a6;
+$color-border-subtle: rgba($color-text, 0.1);
+// Light neutral fill: table expand caret, progress tracks, dividers.
+$color-line: #e6e8ec;
+
+// ---- Status ----------------------------------------------------------------
+$color-danger: #d03b3b;
+// Status dots: healthy / connected.
+$color-success: #1baf7a;
+// Status dots: needs user action (re-auth, manual import).
+$color-warning: #f59e0b;
+
+// "Success" tag in table cells.
+$color-success-soft-bg: rgba(54, 226, 106, 0.15);
+$color-success-soft-border: rgba(53, 212, 101, 0.38);
+
+// ---- Trend (up / down) -----------------------------------------------------
+// Metric tiles and table cells. A trend is not the same as a status, so these
+// greens and reds differ from `$color-success` / `$color-danger`.
+// "Active" status dot and an upward sparkline.
+$color-positive: #0ca30c;
+$color-positive-text: #067306;
+$color-positive-bg: #e7f6e7;
+// A downward sparkline uses `$color-danger`.
+$color-negative-text: #b42323;
+$color-negative-bg: #fce9e9;
+
+// ---- Interactive states ----------------------------------------------------
+// Focus ring: primary at 40% so it works on white and on the page background.
+$color-focus-ring: rgba($color-primary, 0.4);
+// Focus rings of an input in the error / success state.
+$color-focus-ring-danger: rgba($color-danger, 0.25);
+$color-focus-ring-success: rgba($color-success, 0.25);
+
+// ---- Overlays & shadows ----------------------------------------------------
+// Dimmed page behind a modal drawer.
+$color-overlay: rgba($color-text, 0.32);
+// Base color for every box shadow.
+$color-shadow: $color-text;
+
+// ---- Charts ----------------------------------------------------------------
+// Series colors of the "Xerxes AI Reports" charts, in legend order.
+$color-chart-series: (
+  #2a78d6,
+  #eb6834,
+  #1baf7a,
+  #eda100,
+  #e87ba4,
+  #7c5ce0,
+  #12a5b8,
+  #a8623a,
+  #8a9a1f
+);

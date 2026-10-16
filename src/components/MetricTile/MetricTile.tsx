@@ -1,5 +1,6 @@
 import type { ApexOptions } from 'apexcharts'
 import { useMemo, type HTMLAttributes, type ReactNode } from 'react'
+import { colors as colorTokens } from '../../styles/colors'
 import { LineChart } from '../Charts/LineChart'
 import styles from './MetricTile.module.scss'
 
@@ -38,11 +39,11 @@ const STATUS_NAMES: Record<MetricTileStatus, string> = {
   neutral: 'No change',
 }
 
-// ApexCharts needs literal colors. Keep in sync with the stylesheet.
+// ApexCharts needs literal colors, so these come from the color tokens.
 const STATUS_CHART_COLORS: Record<MetricTileStatus, string> = {
-  high: '#0ca30c',
-  low: '#d03b3b',
-  neutral: '#8a94a6',
+  high: colorTokens.positive,
+  low: colorTokens.danger,
+  neutral: colorTokens.textSubtle,
 }
 
 // Flat fill, and the line runs edge to edge of its box.

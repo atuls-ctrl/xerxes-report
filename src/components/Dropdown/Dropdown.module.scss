@@ -4,9 +4,6 @@ $panel-width: 235px;
 $panel-offset: 10px;
 $panel-radius: 10px;
 $panel-padding-x: $space-4;
-$panel-shadow:
-  0 16px 40px -12px rgba(16, 24, 40, 0.28),
-  0 2px 6px rgba(16, 24, 40, 0.08);
 
 .root {
   --dropdown-width: #{$panel-width};
@@ -30,7 +27,7 @@ $panel-shadow:
   border: $border-width solid $color-border;
   border-radius: $panel-radius;
   background: $color-white;
-  box-shadow: $panel-shadow;
+  box-shadow: $shadow-overlay;
   color: $color-text;
   font-family: $font-family-base;
   font-size: $font-size-sm;

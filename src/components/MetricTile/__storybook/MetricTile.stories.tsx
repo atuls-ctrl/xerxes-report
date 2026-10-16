@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import { expect, waitFor, within } from 'storybook/test'
 import { MetricTile, type MetricTileProps } from '../MetricTile'
+import { chartSeriesColors } from '../../../styles/colors'
 
 const falling = [28, 15.3, 9.8, 2, 7.3, 19.4, 20.9]
 const rising = [5.4, 2, 20.7, 10.8, 16.1, 28, 20.3]
@@ -11,7 +12,7 @@ const tiles: MetricTileProps[] = [
   {
     label: 'Gross clicks',
     value: '93.1K',
-    color: '#2a78d6',
+    color: chartSeriesColors[0],
     status: 'low',
     badge: '1.9%',
     data: falling,
@@ -19,7 +20,7 @@ const tiles: MetricTileProps[] = [
   {
     label: 'Fraud %',
     value: '8.6%',
-    color: '#eb6834',
+    color: chartSeriesColors[1],
     status: 'high',
     badge: '1.5%',
     data: rising,
@@ -27,7 +28,7 @@ const tiles: MetricTileProps[] = [
   {
     label: 'Gross event',
     value: '707',
-    color: '#1baf7a',
+    color: chartSeriesColors[2],
     status: 'neutral',
     badge: '0.0 pp',
     data: flat,
@@ -41,7 +42,7 @@ const meta = {
   args: {
     label: 'Gross clicks',
     value: '93.1K',
-    color: '#2a78d6',
+    color: chartSeriesColors[0],
     status: 'low',
     badge: '1.9%',
     showChart: true,
@@ -114,7 +115,7 @@ export const WithoutData: Story = {
 }
 
 export const CustomChartColor: Story = {
-  args: { chartColor: '#7c5ce0' },
+  args: { chartColor: chartSeriesColors[5] },
 }
 
 // ---- Combinations ----------------------------------------------------------
@@ -170,7 +171,7 @@ export const Responsive: Story = {
       <MetricTile
         label="Gross revenue after fraud deductions"
         value="$1,234,567.89"
-        color="#eda100"
+        color={chartSeriesColors[3]}
         status="high"
         badge="12.4%"
         data={rising}

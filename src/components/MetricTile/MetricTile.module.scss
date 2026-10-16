@@ -8,12 +8,6 @@ $value-font-size: 24px;
 $badge-font-size: 12px;
 $badge-radius: 5px;
 
-// Badge colors per status. The sparkline colors live in the component.
-$color-high-bg: #e7f6e7;
-$color-high-text: #067306;
-$color-low-bg: #fce9e9;
-$color-low-text: #b42323;
-
 .root {
   --tile-badge-bg: #{$color-surface-hover};
   --tile-badge-color: #{$color-text-muted};
@@ -32,13 +26,13 @@ $color-low-text: #b42323;
   line-height: $line-height-tight;
 
   &[data-status='high'] {
-    --tile-badge-bg: #{$color-high-bg};
-    --tile-badge-color: #{$color-high-text};
+    --tile-badge-bg: #{$color-positive-bg};
+    --tile-badge-color: #{$color-positive-text};
   }
 
   &[data-status='low'] {
-    --tile-badge-bg: #{$color-low-bg};
-    --tile-badge-color: #{$color-low-text};
+    --tile-badge-bg: #{$color-negative-bg};
+    --tile-badge-color: #{$color-negative-text};
   }
 }
 

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { fn } from 'storybook/test'
 import { CheckboxGroup, type CheckboxGroupOption } from '../CheckboxGroup'
+import { colors } from '../../../styles/colors'
 
 const dimensions: CheckboxGroupOption[] = [
   { value: 'advertiser', label: 'Advertiser' },
@@ -134,7 +135,7 @@ export const Controlled: Story = {
           style={{
             fontFamily: 'Outfit, system-ui, sans-serif',
             fontSize: 12,
-            color: '#475467',
+            color: colors.textMuted,
           }}
         >
           Value: [{value.join(', ')}]

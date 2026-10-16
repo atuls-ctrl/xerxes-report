@@ -23,10 +23,10 @@ $empty-height: 100px;
 // Row fills. Opaque so fixed (sticky) columns hide what scrolls under them.
 $row-hover-bg: $color-surface-hover;
 $row-expanded-bg: $color-surface-hover;
-$row-active-bg: #eaf2fd;
+$row-active-bg: $color-row-active;
 $total-bg: $color-page;
-$highlight-bg: #f5f9fd;
-$highlight-total-bg: #e6ecf5;
+$highlight-bg: $color-row-highlight;
+$highlight-total-bg: $color-row-highlight-total;
 
 // Expand caret.
 $expand-size: 22px;
@@ -46,9 +46,6 @@ $nested-pager-indent: 34px;
 $rows-menu-width: 228px;
 $rows-menu-radius: 10px;
 $rows-menu-item-height: 34px;
-$rows-menu-shadow:
-  0 16px 40px -12px rgba(16, 24, 40, 0.28),
-  0 2px 6px rgba(16, 24, 40, 0.08);
 
 .root {
   --table-row-height: #{$row-height};
@@ -756,7 +753,7 @@ $rows-menu-shadow:
   border: $border-width solid $color-border;
   border-radius: $rows-menu-radius;
   background: $color-white;
-  box-shadow: $rows-menu-shadow;
+  box-shadow: $shadow-overlay;
   font-family: $font-family-base;
 }
 

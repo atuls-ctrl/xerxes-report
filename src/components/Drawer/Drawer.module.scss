@@ -3,10 +3,6 @@
 $drawer-width: 500px;
 $drawer-padding-x: 18px;
 $drawer-duration: 0.2s;
-$drawer-shadow:
-  0 16px 40px -12px rgba($color-text, 0.28),
-  0 2px 6px rgba($color-text, 0.08);
-$overlay-color: rgba($color-text, 0.32);
 $title-font-size: 17px;
 $caption-font-size: 12px;
 
@@ -34,7 +30,7 @@ $caption-font-size: 12px;
   border: 0;
   border-inline-start: $border-width solid $color-border-subtle;
   background: $color-white;
-  box-shadow: $drawer-shadow;
+  box-shadow: $shadow-overlay;
   color: $color-text;
   font-family: $font-family-base;
   font-size: $font-size-sm;
@@ -77,7 +73,7 @@ $caption-font-size: 12px;
   }
 
   &[open][data-overlay='true']::backdrop {
-    background: $overlay-color;
+    background: $color-overlay;
 
     @starting-style {
       background: transparent;

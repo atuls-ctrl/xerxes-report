@@ -3,6 +3,7 @@ import { useState, type ReactNode } from 'react'
 import { fn, userEvent, within } from 'storybook/test'
 import { Input } from '../Input'
 import { Icon } from '../../icons'
+import { colors } from '../../../styles/colors'
 
 const iconOptions = {
   none: undefined,
@@ -68,7 +69,7 @@ const row = { display: 'flex', alignItems: 'flex-start', gap: 74 } as const
 const caption = {
   fontFamily: 'Outfit, system-ui, sans-serif',
   fontSize: 12,
-  color: '#475467',
+  color: colors.textMuted,
   fontWeight: 600,
 } as const
 

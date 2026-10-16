@@ -4,7 +4,6 @@ $popup-width: 240px;
 $popup-padding-x: 14px;
 $cell-size: 28px;
 $checkbox-size: 16px;
-$color-range-bg: rgba($color-primary, 0.12);
 
 .root {
   position: relative;
@@ -308,7 +307,7 @@ $color-range-bg: rgba($color-primary, 0.12);
     .ant-picker-cell-in-view.ant-picker-cell-range-start,
     .ant-picker-cell-in-view.ant-picker-cell-range-end {
       &:not(.ant-picker-cell-disabled)::before {
-        background: $color-range-bg;
+        background: $color-primary-range;
       }
     }
 

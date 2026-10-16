@@ -1,4 +1,5 @@
 import type { ApexOptions } from 'apexcharts'
+import { chartSeriesColors } from '../../../styles/colors'
 
 export interface ChartSeries {
   /** Stable id, reported back in `hiddenSeries`. Defaults to `name`. */
@@ -16,17 +17,7 @@ export interface ChartSeries {
 export type ChartLegendPosition = 'top' | 'bottom' | 'none'
 
 /** Series colors of the "Xerxes AI Reports" charts, in legend order. */
-export const DEFAULT_COLORS = [
-  '#2a78d6',
-  '#eb6834',
-  '#1baf7a',
-  '#eda100',
-  '#e87ba4',
-  '#7c5ce0',
-  '#12a5b8',
-  '#a8623a',
-  '#8a9a1f',
-]
+export const DEFAULT_COLORS = [...chartSeriesColors]
 
 export const DEFAULT_HEIGHT = 270
 
