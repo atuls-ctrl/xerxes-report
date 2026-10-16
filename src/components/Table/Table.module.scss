@@ -39,6 +39,16 @@ $spinner-size: 14px;
 $pager-height: 28px;
 $pager-arrow-width: 31px;
 $pager-disabled-opacity: 0.35;
+$nested-pager-height: 24px;
+$nested-pager-indent: 34px;
+
+// Rows-per-page menu (same panel as the project Dropdown).
+$rows-menu-width: 228px;
+$rows-menu-radius: 10px;
+$rows-menu-item-height: 34px;
+$rows-menu-shadow:
+  0 16px 40px -12px rgba(16, 24, 40, 0.28),
+  0 2px 6px rgba(16, 24, 40, 0.08);
 
 .root {
   --table-row-height: #{$row-height};
@@ -447,6 +457,150 @@ $pager-disabled-opacity: 0.35;
   white-space: normal;
 }
 
+// ---- Pager (Figma "Pagination & footer") -----------------------------------
+// Page buttons, arrows and the page gap of an Ant Design Pagination.
+// `$current` is `outlined` (table footer) or `filled` (nested pager).
+@mixin pager-items($height, $font-size, $current: outlined) {
+  .ant-pagination-prev,
+  .ant-pagination-item,
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next,
+  .ant-pagination-next {
+    order: 2;
+    margin: 0;
+  }
+
+  .ant-pagination-item {
+    @include interactive-transition;
+
+    min-width: $height;
+    height: $height;
+    border: $border-width solid transparent;
+    border-radius: $radius-sm;
+    background: transparent;
+    font-size: $font-size;
+    font-weight: $font-weight-medium;
+    line-height: $height - 2px;
+
+    a {
+      padding: 0 $space-1;
+      color: $color-text-muted;
+    }
+
+    // Hover and pressed share one look in Figma.
+    &:hover,
+    &:active {
+      background: $color-surface-hover;
+
+      a {
+        color: $color-text;
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+    }
+  }
+
+  .ant-pagination-item-active {
+    font-weight: $font-weight-semibold;
+
+    @if $current == filled {
+      border-color: $color-primary;
+      background: $color-primary;
+
+      a,
+      &:hover a {
+        color: $color-white;
+      }
+
+      &:hover,
+      &:active {
+        background: $color-primary;
+      }
+    } @else {
+      border-color: $color-border;
+      background: $color-surface-hover;
+
+      a,
+      &:hover a {
+        color: $color-text;
+      }
+    }
+  }
+
+  .ant-pagination-prev,
+  .ant-pagination-next {
+    @include interactive-transition;
+
+    min-width: $pager-arrow-width;
+    height: $height;
+    border-radius: $radius-sm;
+    line-height: $height;
+
+    &:hover:not(.ant-pagination-disabled) {
+      background: $color-surface-hover;
+
+      // The mixin runs inside `:global`, so name the module class explicitly.
+      :local(.pagerArrow) {
+        color: $color-text;
+      }
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+    }
+  }
+
+  .ant-pagination-disabled {
+    opacity: $pager-disabled-opacity;
+  }
+
+  .ant-pagination-jump-prev,
+  .ant-pagination-jump-next {
+    min-width: $height;
+    height: $height;
+    border-radius: $radius-sm;
+    line-height: $height;
+
+    &:hover {
+      background: $color-surface-hover;
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+    }
+  }
+}
+
+.pagerArrow {
+  @include reset-button;
+  @include interactive-transition(color);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: $color-text-muted;
+  cursor: inherit;
+}
+
+// Figma "Page gap": ellipsis between page numbers.
+.pagerGap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: $color-text-subtle;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
 // ---- Footer (pagination) ---------------------------------------------------
 .root .table :global(.ant-table-pagination).pagination {
   display: flex;
@@ -477,91 +631,56 @@ $pager-disabled-opacity: 0.35;
       margin: 0 $space-4 0 0;
     }
 
-    .ant-pagination-prev,
-    .ant-pagination-item,
-    .ant-pagination-jump-prev,
-    .ant-pagination-jump-next,
-    .ant-pagination-next {
-      order: 2;
-      margin: 0;
-    }
-
-    .ant-pagination-item {
-      min-width: $pager-height;
-      height: $pager-height;
-      border: $border-width solid transparent;
-      border-radius: $radius-sm;
-      background: transparent;
-      line-height: $pager-height - 2px;
-      font-size: $font-size-xs;
-      font-weight: $font-weight-semibold;
-
-      a {
-        padding: 0 $space-1;
-        color: $color-text-muted;
-      }
-
-      &:hover {
-        background: $color-surface-hover;
-      }
-
-      &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
-      }
-    }
-
-    .ant-pagination-item-active {
-      border-color: $color-border;
-      background: $color-surface-hover;
-
-      a,
-      &:hover a {
-        color: $color-text;
-      }
-    }
-
-    .ant-pagination-prev,
-    .ant-pagination-next {
-      min-width: $pager-arrow-width;
-      height: $pager-height;
-      border-radius: $radius-sm;
-
-      &:hover:not(.ant-pagination-disabled) {
-        background: $color-surface-hover;
-      }
-
-      &:focus-visible {
-        outline: none;
-        box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
-      }
-    }
-
-    .ant-pagination-disabled {
-      opacity: $pager-disabled-opacity;
-    }
-
-    .ant-pagination-item-ellipsis {
-      color: $color-text-subtle;
-    }
+    @include pager-items($pager-height, $font-size-xs);
   }
 }
 
-.pagerArrow {
-  @include reset-button;
+// ---- Nested pager (under an expanded row) ----------------------------------
+.root .table :global(.ant-table-tbody) > tr.childPagerRow > td {
+  height: auto;
+  padding: $space-2 $cell-padding-x;
+  background: $color-white;
+}
 
+.childPager {
+  // Lines up with the paged rows (Figma: 46px for the first level).
+  position: sticky;
+  left: 0;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: $color-text-muted;
-  cursor: inherit;
+  padding-inline-start: calc(
+    #{$nested-pager-indent} + (var(--child-pager-level, 1) - 1) *
+      #{$indent-size}
+  );
+
+  :global {
+    .ant-pagination {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3px;
+      font-family: $font-family-base;
+    }
+
+    .ant-pagination-total-text {
+      order: 0;
+      height: auto;
+      margin: 0 $space-3 0 0;
+      color: $color-text-subtle;
+      font-size: $footer-font-size;
+      line-height: $header-line-height;
+    }
+
+    @include pager-items(
+      $nested-pager-height,
+      $footer-font-size,
+      $current: filled
+    );
+  }
 }
 
 // ---- Rows per page (Ant Design Select) ------------------------------------
-// Trigger: Figma "button listbox.ddbtn" pill. Panel: same look as the project
-// Dropdown (border, 10px radius, popup shadow).
+// Figma "Rows-per-page dropdown": pill trigger and a menu with a check on
+// the selected size.
 .root .table .rowsPerPage {
   @include interactive-transition;
 
@@ -627,26 +746,29 @@ $pager-disabled-opacity: 0.35;
   transform: rotate(180deg);
 }
 
-// The panel is portaled to <body>, so it is styled on its own.
+// The menu is portaled to <body>, so it is styled on its own.
 :global(.ant-select-dropdown).rowsPerPagePopup {
-  min-width: 72px;
-  padding: $space-1;
+  box-sizing: border-box;
+  width: $rows-menu-width;
+  max-width: calc(100vw - #{2 * $space-5});
+  padding: 0;
+  overflow: hidden;
   border: $border-width solid $color-border;
-  border-radius: 10px;
+  border-radius: $rows-menu-radius;
   background: $color-white;
-  box-shadow: $shadow-popup;
+  box-shadow: $rows-menu-shadow;
   font-family: $font-family-base;
 }
 
 :global(.ant-select-dropdown).rowsPerPagePopup .rowsPerPageOption {
   display: flex;
   align-items: center;
-  min-height: $pager-height;
-  padding: 0 $space-3;
-  border-radius: 6px;
+  min-height: $rows-menu-item-height;
+  padding: 0 13px;
+  border-radius: 0;
   color: $color-text;
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-regular;
   line-height: $line-height-tight;
 
   // Mouse hover and keyboard (arrow keys) highlight.
@@ -654,9 +776,18 @@ $pager-disabled-opacity: 0.35;
     background: $color-surface-hover;
   }
 
+  // Selected: no fill, a blue check on the right.
   &:global(.ant-select-item-option-selected) {
-    background: $color-primary-soft;
+    background: transparent;
+    font-weight: $font-weight-regular;
+  }
+
+  &:global(.ant-select-item-option-selected.ant-select-item-option-active) {
+    background: $color-surface-hover;
+  }
+
+  :global(.ant-select-item-option-state) {
+    display: inline-flex;
     color: $color-primary;
-    font-weight: $font-weight-semibold;
   }
 }

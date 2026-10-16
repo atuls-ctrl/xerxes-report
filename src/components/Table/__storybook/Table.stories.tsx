@@ -256,13 +256,17 @@ export const SortingAndFiltering: Story = {
   },
 }
 
-// 60 rows. "Rows per page" is an Ant Design Select; the page size is kept in
+// 120 rows. "Rows per page" is an Ant Design Select; the page size is kept in
 // state here to show it stays in sync with the table's pagination.
-const MANY_CAMPAIGNS: CampaignRow[] = Array.from({ length: 60 }, (_, index) => {
-  const { children: _children, ...source } = CAMPAIGNS[index % CAMPAIGNS.length]
-  const id = String(10000 + index)
-  return { ...source, key: id, title: id }
-})
+const MANY_CAMPAIGNS: CampaignRow[] = Array.from(
+  { length: 120 },
+  (_, index) => {
+    const { children: _children, ...source } =
+      CAMPAIGNS[index % CAMPAIGNS.length]
+    const id = String(10000 + index)
+    return { ...source, key: id, title: id }
+  },
+)
 
 export const Pagination: Story = {
   args: { search: false, showDensityToggle: false },
@@ -273,7 +277,7 @@ export const Pagination: Story = {
       <Table<CampaignRow>
         {...args}
         dataSource={MANY_CAMPAIGNS}
-        totalRow={{ ...CAMPAIGN_TOTALS, caption: '· 60 campaign rows' }}
+        totalRow={{ ...CAMPAIGN_TOTALS, caption: '· 120 campaign rows' }}
         toolbar={
           <span style={{ fontSize: 12.5, color: '#475467' }}>
             Page {page} · {pageSize} rows per page
@@ -290,6 +294,49 @@ export const Pagination: Story = {
         }}
       />
     )
+  },
+}
+
+// Figma "Nested pager": an expanded row with 30 children shows 10 at a time
+// with a small pager under them. Pages follow the column sort.
+const TIERS = ['P2P', 'T1', 'T2', 'T3']
+const PAGED_CAMPAIGNS: CampaignRow[] = CAMPAIGNS.slice(0, 3).map(
+  (campaign, campaignIndex) => {
+    const { children: _children, ...source } = campaign
+    if (campaignIndex > 0) return source
+    // Child rows show no status dot or campaign name.
+    const { meta: _meta, status: _status, ...metrics } = source
+    const publishers: CampaignRow[] = Array.from({ length: 30 }, (_, index) => {
+      const id = String(3400 + index * 7)
+      return {
+        ...metrics,
+        key: `${source.key}-bundle-${id}`,
+        title: id,
+        meta: TIERS[index % TIERS.length] ?? 'T1',
+        impressions: 30000 - index * 900,
+        grossClicks: 7000 - index * 210,
+      }
+    })
+    return {
+      ...source,
+      children: [
+        {
+          ...metrics,
+          key: `${source.key}-bundle`,
+          title: 'ru.rt.video.app.mobile',
+          children: publishers,
+        },
+      ],
+    }
+  },
+)
+
+export const NestedPagination: Story = {
+  args: {
+    dataSource: PAGED_CAMPAIGNS,
+    childPageSize: 10,
+    expandable: { defaultExpandedRowKeys: ['26389', '26389-bundle'] },
+    search: false,
   },
 }
 

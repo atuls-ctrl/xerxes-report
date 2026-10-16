@@ -1,4 +1,5 @@
 import {
+  Pagination as AntPagination,
   Select as AntSelect,
   Table as AntTable,
   type TableProps as AntTableProps,
@@ -10,12 +11,16 @@ import type {
   ColumnType,
   TablePaginationConfig,
 } from 'antd/es/table'
+import type { SorterResult, SortOrder } from 'antd/es/table/interface'
 import {
   createContext,
   isValidElement,
   useContext,
   useState,
   type ChangeEvent,
+  type ComponentType,
+  type CSSProperties,
+  type HTMLAttributes,
   type KeyboardEvent,
   type Key,
   type MouseEvent,
@@ -113,6 +118,12 @@ export interface TableProps<RecordType extends object> extends Omit<
   footerText?: (range: TableFooterRange) => ReactNode
   /** Text before the page-size select. */
   rowsPerPageLabel?: string
+  /**
+   * Pages the children of an expanded row when there are more than this,
+   * with a small pager under them. Children are sorted by the active column
+   * sort before paging.
+   */
+  childPageSize?: number
 }
 
 const DEFAULT_PAGE_SIZE = 25
@@ -232,6 +243,121 @@ function getRowKey<RecordType extends object>(
     : undefined
 }
 
+// ---- Child paging (pager under an expanded row) ----------------------------
+type CompareFn<RecordType> = (a: RecordType, b: RecordType) => number
+
+// Which column the user sorted by; `undefined` until they sort once.
+interface SortState {
+  columnId: string
+  order: SortOrder
+}
+
+const getColumnId = (key: unknown, dataIndex: unknown) =>
+  String(key ?? dataIndex)
+
+// The comparator for the active sort, resolved the way Ant Design does:
+// controlled `sortOrder` first, then the user's last sort, then
+// `defaultSortOrder`.
+function getActiveCompare<RecordType>(
+  leaves: ColumnType<RecordType>[],
+  sortState: SortState | undefined,
+): CompareFn<RecordType> | undefined {
+  let column: ColumnType<RecordType> | undefined
+  let order: SortOrder | undefined
+  if (leaves.some((leaf) => leaf.sortOrder !== undefined)) {
+    column = leaves.find((leaf) => leaf.sortOrder)
+    order = column?.sortOrder
+  } else if (sortState) {
+    column = leaves.find(
+      (leaf) => getColumnId(leaf.key, leaf.dataIndex) === sortState.columnId,
+    )
+    order = sortState.order
+  } else {
+    column = leaves.find((leaf) => leaf.defaultSortOrder)
+    order = column?.defaultSortOrder
+  }
+  const sorter = column?.sorter
+  const compare =
+    typeof sorter === 'function'
+      ? sorter
+      : typeof sorter === 'object'
+        ? sorter.compare
+        : undefined
+  if (!compare || !order) return undefined
+  const direction = order === 'ascend' ? 1 : -1
+  return (a, b) => direction * compare(a, b, order)
+}
+
+interface ChildPagerInfo {
+  parentKey: Key
+  /** Depth of the paged children (1 = children of a top-level row). */
+  level: number
+  page: number
+  pageSize: number
+  total: number
+}
+
+interface ChildPagerContextValue {
+  /** Pagers to draw after the row with this key, innermost first. */
+  pagers: Map<string, ChildPagerInfo[]>
+  colSpan: number
+  onPageChange: (parentKey: Key, page: number) => void
+  Row: ComponentType<HTMLAttributes<HTMLTableRowElement>> | 'tr'
+}
+
+const ChildPagerContext = createContext<ChildPagerContextValue | null>(null)
+
+type BodyRowProps = HTMLAttributes<HTMLTableRowElement> & {
+  'data-row-key'?: Key
+}
+
+type PagerCssVars = CSSProperties & Record<`--child-pager-${string}`, string>
+
+// Ant Design's body row, plus the child pager(s) that close a paged group.
+function BodyRow(props: BodyRowProps) {
+  const context = useContext(ChildPagerContext)
+  const Row = context?.Row ?? 'tr'
+  const rowKey = props['data-row-key']
+  const pagers =
+    context && rowKey !== undefined ? context.pagers.get(String(rowKey)) : []
+  if (!context || !pagers?.length) return <Row {...props} />
+  return (
+    <>
+      <Row {...props} />
+      {pagers.map((pager) => {
+        const indent: PagerCssVars = {
+          '--child-pager-level': String(pager.level),
+        }
+        return (
+          <tr
+            key={`pager-${String(pager.parentKey)}`}
+            className={styles.childPagerRow}
+          >
+            <td colSpan={context.colSpan}>
+              <div className={styles.childPager} style={indent}>
+                <AntPagination
+                  size="small"
+                  current={pager.page}
+                  pageSize={pager.pageSize}
+                  total={pager.total}
+                  showSizeChanger={false}
+                  showTotal={(total, [start, end]) =>
+                    `${String(start)}–${String(end)} of ${String(total)}`
+                  }
+                  itemRender={renderPagerItem}
+                  onChange={(page) => {
+                    context.onPageChange(pager.parentKey, page)
+                  }}
+                />
+              </div>
+            </td>
+          </tr>
+        )
+      })}
+    </>
+  )
+}
+
 // ---- Selection checkbox ----------------------------------------------------
 interface OriginCheckboxProps {
   checked?: boolean
@@ -342,6 +468,9 @@ function RowsPerPage({
         <Icon name="down" width={14} height={14} aria-hidden="true" />
       }
       aria-label={label}
+      menuItemSelectedIcon={
+        <Icon name="check" width={14} height={14} aria-hidden="true" />
+      }
       placement="bottomRight"
       popupMatchSelectWidth={false}
     />
@@ -353,6 +482,10 @@ const renderPagerItem: NonNullable<TablePaginationConfig['itemRender']> = (
   type,
   element,
 ) => {
+  // Figma "Page gap": a quiet ellipsis (antd swaps in arrows on hover).
+  if (type === 'jump-prev' || type === 'jump-next') {
+    return <span className={styles.pagerGap}>…</span>
+  }
   if (type !== 'prev' && type !== 'next') return element
   // The surrounding <li> is the focusable control; the button is visual.
   return (
@@ -388,12 +521,15 @@ export function Table<RecordType extends object>({
   footerHint,
   footerText,
   rowsPerPageLabel = 'Rows per page',
+  childPageSize,
   rowKey = 'key',
   rowClassName,
   rowSelection,
   expandable,
   pagination,
   onRow,
+  onChange,
+  components,
   locale,
   scroll,
   sticky,
@@ -413,7 +549,74 @@ export function Table<RecordType extends object>({
   }
 
   const decoratedColumns = decorateColumns(columns)
+  const leafColumns = getLeafColumns(decoratedColumns)
   const loadingKeys = new Set(loadingRowKeys)
+
+  // ---- Child paging ----
+  const isChildPaging = childPageSize !== undefined && childPageSize > 0
+  const childrenColumnName = expandable?.childrenColumnName ?? 'children'
+  const [sortState, setSortState] = useState<SortState>()
+  const [childPages, setChildPages] = useState<Record<string, number>>({})
+  // Expanded keys are tracked here (when child paging is on) so the pager
+  // can follow the last visible row of a paged group.
+  const [internalExpandedKeys, setInternalExpandedKeys] = useState<
+    readonly Key[]
+  >(() => expandable?.defaultExpandedRowKeys ?? [])
+  const expandedKeys = expandable?.expandedRowKeys ?? internalExpandedKeys
+  const childPagers = new Map<string, ChildPagerInfo[]>()
+
+  let pagedDataSource = dataSource
+  if (isChildPaging && dataSource) {
+    const compare = getActiveCompare(leafColumns, sortState)
+    const expandedSet = new Set(expandedKeys.map(String))
+    const getChildren = (row: RecordType) => {
+      const children = (row as Record<string, unknown>)[childrenColumnName]
+      return Array.isArray(children) ? (children as RecordType[]) : undefined
+    }
+    // The row the pager follows: the last row drawn for the group.
+    const lastVisibleRow = (row: RecordType): RecordType => {
+      const key = getRowKey(rowKey, row)
+      const last = getChildren(row)?.at(-1)
+      return last && key !== undefined && expandedSet.has(String(key))
+        ? lastVisibleRow(last)
+        : row
+    }
+    const pageRows = (rows: readonly RecordType[], level: number) =>
+      rows.map((row): RecordType => {
+        const children = getChildren(row)
+        if (!children?.length) return row
+        const parentKey = getRowKey(rowKey, row)
+        let shown = children
+        let pager: ChildPagerInfo | undefined
+        if (parentKey !== undefined && children.length > childPageSize) {
+          const pageCount = Math.ceil(children.length / childPageSize)
+          const page = Math.min(childPages[String(parentKey)] ?? 1, pageCount)
+          const ordered = compare ? [...children].sort(compare) : children
+          shown = ordered.slice(
+            (page - 1) * childPageSize,
+            page * childPageSize,
+          )
+          pager = {
+            parentKey,
+            level: level + 1,
+            page,
+            pageSize: childPageSize,
+            total: children.length,
+          }
+        }
+        const pagedChildren = pageRows(shown, level + 1)
+        const lastShown = pagedChildren.at(-1)
+        if (pager && lastShown) {
+          const anchor = getRowKey(rowKey, lastVisibleRow(lastShown))
+          if (anchor !== undefined) {
+            const list = childPagers.get(String(anchor)) ?? []
+            childPagers.set(String(anchor), [...list, pager])
+          }
+        }
+        return { ...row, [childrenColumnName]: pagedChildren }
+      })
+    pagedDataSource = pageRows(dataSource, 0)
+  }
 
   // ---- Rows ----
   const getRowClassName: AntProps<RecordType>['rowClassName'] = (
@@ -492,6 +695,13 @@ export function Table<RecordType extends object>({
       )
     },
     ...expandable,
+    ...(isChildPaging && {
+      expandedRowKeys: expandedKeys,
+      onExpandedRowsChange: (keys: readonly Key[]) => {
+        setInternalExpandedKeys(keys)
+        expandable?.onExpandedRowsChange?.(keys)
+      },
+    }),
   }
 
   // ---- Selection ----
@@ -512,7 +722,6 @@ export function Table<RecordType extends object>({
     }
 
   // ---- Total row ----
-  const leafColumns = getLeafColumns(decoratedColumns)
   const leadingCells =
     (rowSelection ? 1 : 0) + (expandable?.expandedRowRender ? 1 : 0)
 
@@ -588,6 +797,52 @@ export function Table<RecordType extends object>({
             .join(' '),
         }
 
+  const handleChange: AntProps<RecordType>['onChange'] = (
+    paginationInfo,
+    filters,
+    sorter,
+    extra,
+  ) => {
+    if (extra.action === 'sort') {
+      const first: SorterResult<RecordType> | undefined = Array.isArray(sorter)
+        ? sorter.at(0)
+        : sorter
+      setSortState(
+        first
+          ? {
+              columnId: getColumnId(first.columnKey, first.field),
+              order: first.order ?? null,
+            }
+          : undefined,
+      )
+    }
+    onChange?.(paginationInfo, filters, sorter, extra)
+  }
+
+  const userBody = components?.body
+  const userRow = typeof userBody === 'object' ? userBody.row : undefined
+  const mergedComponents: AntProps<RecordType>['components'] = isChildPaging
+    ? {
+        ...components,
+        body: {
+          ...(typeof userBody === 'object' ? userBody : {}),
+          row: BodyRow,
+        },
+      }
+    : components
+
+  const childPagerContext: ChildPagerContextValue = {
+    pagers: childPagers,
+    colSpan:
+      leafColumns.filter((column) => !column.hidden).length + leadingCells,
+    onPageChange: (parentKey, page) => {
+      setChildPages((pages) => ({ ...pages, [String(parentKey)]: page }))
+    },
+    Row:
+      (userRow as
+        ComponentType<HTMLAttributes<HTMLTableRowElement>> | undefined) ?? 'tr',
+  }
+
   // ---- Toolbar ----
   const searchProps = search === true ? {} : search || undefined
   const hasToolbar =
@@ -655,28 +910,36 @@ export function Table<RecordType extends object>({
       <PageSizeContext.Provider
         value={{ options: pageSizeOptions, label: rowsPerPageLabel }}
       >
-        <AntTable<RecordType>
-          {...rest}
-          {...classNameProp(className)}
-          {...(dataSource !== undefined && { dataSource })}
-          {...(mergedRowSelection !== undefined && {
-            rowSelection: mergedRowSelection,
-          })}
-          {...(renderSummary !== undefined && { summary: renderSummary })}
-          {...(mergedSticky !== undefined && { sticky: mergedSticky })}
-          rootClassName={styles.table}
-          columns={decoratedColumns}
-          rowKey={rowKey}
-          rowClassName={getRowClassName}
-          onRow={getRowProps}
-          expandable={mergedExpandable}
-          pagination={mergedPagination}
-          scroll={{ x: 'max-content', ...scroll }}
-          locale={{
-            emptyText: <div className={styles.empty}>{emptyText}</div>,
-            ...locale,
-          }}
-        />
+        <ChildPagerContext.Provider value={childPagerContext}>
+          <AntTable<RecordType>
+            {...rest}
+            {...classNameProp(className)}
+            {...(pagedDataSource !== undefined && {
+              dataSource: pagedDataSource,
+            })}
+            {...(mergedComponents !== undefined && {
+              components: mergedComponents,
+            })}
+            onChange={handleChange}
+            {...(mergedRowSelection !== undefined && {
+              rowSelection: mergedRowSelection,
+            })}
+            {...(renderSummary !== undefined && { summary: renderSummary })}
+            {...(mergedSticky !== undefined && { sticky: mergedSticky })}
+            rootClassName={styles.table}
+            columns={decoratedColumns}
+            rowKey={rowKey}
+            rowClassName={getRowClassName}
+            onRow={getRowProps}
+            expandable={mergedExpandable}
+            pagination={mergedPagination}
+            scroll={{ x: 'max-content', ...scroll }}
+            locale={{
+              emptyText: <div className={styles.empty}>{emptyText}</div>,
+              ...locale,
+            }}
+          />
+        </ChildPagerContext.Provider>
       </PageSizeContext.Provider>
     </div>
   )
