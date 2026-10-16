@@ -1,0 +1,130 @@
+@use '../../styles' as *;
+
+// Figma "Row label (caret, status dot, id, name)" and "Cell types".
+$dot-size: 7px;
+$dot-active: #0ca30c;
+$row-title-line-height: 15.6px;
+$row-meta-font-size: 11.5px;
+$row-meta-line-height: 13.8px;
+$value-strong-font-size: 13.5px;
+$tone-negative: #b42323;
+$tone-positive: #067306;
+$tag-height: 22px;
+$tag-padding-x: 11px;
+$tag-font-size: 12px;
+$tag-success-bg: rgba(54, 226, 106, 0.15);
+$tag-success-border: rgba(53, 212, 101, 0.38);
+
+.srOnly {
+  @include visually-hidden;
+}
+
+// ---- Row label -------------------------------------------------------------
+.rowLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.dot {
+  flex-shrink: 0;
+  width: $dot-size;
+  height: $dot-size;
+  border-radius: 50%;
+  background: $dot-active;
+
+  &[data-status='paused'] {
+    background: $color-warning;
+  }
+
+  &[data-status='stopped'] {
+    background: $color-border-strong;
+  }
+}
+
+.rowTitle {
+  overflow: hidden;
+  color: $color-text;
+  line-height: $row-title-line-height;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowMeta {
+  overflow: hidden;
+  color: $color-text-subtle;
+  font-size: $row-meta-font-size;
+  line-height: $row-meta-line-height;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ---- Value -----------------------------------------------------------------
+.value {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+
+  &[data-tone='empty'] {
+    color: $color-text-subtle;
+  }
+
+  &[data-tone='warning'] {
+    color: $tone-negative;
+    font-size: $value-strong-font-size;
+    font-weight: $font-weight-semibold;
+  }
+
+  &[data-tone='negative'] {
+    color: $tone-negative;
+    font-size: $value-strong-font-size;
+    font-weight: $font-weight-medium;
+  }
+
+  &[data-tone='positive'] {
+    color: $tone-positive;
+    font-size: $value-strong-font-size;
+    font-weight: $font-weight-medium;
+  }
+}
+
+.warningIcon {
+  display: inline-flex;
+}
+
+// Figma "Event cell with % of installs": fixed slot so values line up.
+.share {
+  min-width: 4ch;
+  margin-inline-start: $space-5;
+  color: $color-text-subtle;
+  font-size: $row-meta-font-size;
+  font-weight: $font-weight-regular;
+  text-align: end;
+}
+
+// ---- Tag -------------------------------------------------------------------
+.tag {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: $tag-height;
+  padding-inline: $tag-padding-x;
+  border: $border-width solid $color-border;
+  border-radius: $radius-pill;
+  background: $color-surface-hover;
+  color: $color-text-muted;
+  font-size: $tag-font-size;
+  font-weight: $font-weight-medium;
+  line-height: 1;
+  white-space: nowrap;
+
+  &[data-tone='success'] {
+    border-color: $tag-success-border;
+    background: $tag-success-bg;
+    color: $color-text;
+  }
+}

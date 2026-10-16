@@ -1,0 +1,662 @@
+@use '../../styles' as *;
+
+// Figma "Table" (section "Header", "Body rows", "Row label", "Compact density
+// and empty state", table cards). Ant Design renders the table; these rules
+// restyle its markup. Antd's own selectors are wrapped in `:where()`, so the
+// `.root`-scoped rules below win without `!important`.
+
+$toolbar-height: 56px;
+$toolbar-padding-x: 14px;
+$cell-padding-x: 12px;
+$group-row-height: 28px;
+$header-row-height: 36px;
+$row-height: 36px;
+$row-height-compact: 30px;
+$header-font-size: 12px;
+$header-line-height: 17.4px;
+$group-font-size: 10.5px;
+$group-letter-spacing: 0.84px;
+$total-caption-font-size: 10.8px;
+$footer-font-size: 12px;
+$empty-height: 100px;
+
+// Row fills. Opaque so fixed (sticky) columns hide what scrolls under them.
+$row-hover-bg: $color-surface-hover;
+$row-expanded-bg: $color-surface-hover;
+$row-active-bg: #eaf2fd;
+$total-bg: $color-page;
+$highlight-bg: #f5f9fd;
+$highlight-total-bg: #e6ecf5;
+
+// Expand caret.
+$expand-size: 22px;
+$expand-radius: 5px;
+$expand-bg: $color-line;
+$indent-size: 20px;
+$spinner-size: 14px;
+
+// Footer pager.
+$pager-height: 28px;
+$pager-arrow-width: 31px;
+$pager-disabled-opacity: 0.35;
+
+.root {
+  --table-row-height: #{$row-height};
+
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+  max-width: 100%;
+  // `clip` keeps the rounded corners without breaking the sticky header.
+  overflow: clip;
+  border: $border-width solid $color-line;
+  border-radius: $radius-md;
+  background: $color-white;
+  box-shadow: $shadow-xs;
+  color: $color-text;
+  font-family: $font-family-base;
+  font-size: $font-size-sm;
+
+  &[data-density='compact'] {
+    --table-row-height: #{$row-height-compact};
+  }
+}
+
+// ---- Toolbar ---------------------------------------------------------------
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-2 $space-4;
+  box-sizing: border-box;
+  min-height: $toolbar-height;
+  padding: $space-4 $toolbar-padding-x;
+  border-bottom: $border-width solid $color-line;
+}
+
+.toolbarStart,
+.toolbarEnd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+}
+
+.toolbarEnd {
+  margin-inline-start: auto;
+}
+
+.densityToggle[data-active] {
+  background: $color-surface-hover;
+}
+
+// ---- Table -----------------------------------------------------------------
+.root .table {
+  min-width: 0;
+
+  :global {
+    .ant-table {
+      background: transparent;
+      color: $color-text;
+      font-family: $font-family-base;
+      font-size: $font-size-sm;
+      line-height: $line-height-tight;
+      border-radius: 0;
+    }
+
+    .ant-table-container,
+    .ant-table-container table {
+      border-radius: 0 !important;
+    }
+
+    // -- Header --
+    .ant-table-thead > tr > th {
+      height: $header-row-height;
+      padding: 0 $cell-padding-x;
+      border-bottom: $border-width solid $color-line;
+      background: $color-white;
+      color: $color-text-muted;
+      font-size: $header-font-size;
+      font-weight: $font-weight-medium;
+      line-height: $header-line-height;
+      white-space: nowrap;
+      transition: color $transition-duration $transition-easing;
+
+      &::before {
+        display: none;
+      }
+    }
+
+    // A plain column next to groups spans both header rows; its text
+    // lines up with the lower row, as in Figma.
+    .ant-table-thead > tr > th[rowspan]:not([rowspan='1']) {
+      vertical-align: bottom;
+      padding-bottom: calc(($header-row-height - $header-line-height) / 2);
+    }
+
+    .ant-table-thead > tr > th.ant-table-column-has-sorters {
+      cursor: pointer;
+
+      &:hover {
+        background: $color-white;
+        color: $color-text;
+      }
+    }
+
+    .ant-table-thead > tr > th.ant-table-column-sort {
+      background: $color-white;
+    }
+
+    // Sort arrow: one glyph after the title, colored when the column is sorted.
+    .ant-table-column-sorters {
+      display: inline-flex;
+      justify-content: flex-start;
+      gap: 2px;
+      max-width: 100%;
+    }
+
+    .ant-table-column-title {
+      flex: none;
+    }
+
+    .ant-table-column-sorter {
+      width: 8px;
+      margin: 0;
+      color: transparent;
+      // Antd zeroes the font size for its icon carets.
+      font-size: $header-font-size;
+      line-height: $header-line-height;
+
+      &::before {
+        content: '↓';
+      }
+    }
+
+    .ant-table-column-sorter-inner {
+      display: none;
+    }
+
+    th.ant-table-column-has-sorters:hover .ant-table-column-sorter {
+      color: $color-border-strong;
+    }
+
+    th.ant-table-column-has-sorters[aria-sort] .ant-table-column-sorter,
+    th.ant-table-column-has-sorters[aria-sort]:hover .ant-table-column-sorter {
+      color: $color-primary;
+    }
+
+    th[aria-sort='ascending'] .ant-table-column-sorter::before {
+      content: '↑';
+    }
+
+    th.ant-table-column-has-sorters:focus-visible {
+      outline: none;
+      box-shadow: inset 0 0 0 2px $color-focus-ring;
+    }
+
+    .ant-table-filter-trigger {
+      margin-inline: 2px -4px;
+      color: $color-text-subtle;
+
+      &:hover {
+        background: $color-surface-hover;
+        color: $color-text;
+      }
+
+      &.active {
+        color: $color-primary;
+      }
+    }
+
+    // -- Body --
+    .ant-table-tbody > tr > td,
+    .ant-table-summary > tr > td {
+      height: var(--table-row-height);
+      padding: 0 $cell-padding-x;
+      border-bottom: $border-width solid $color-line;
+      background: $color-white;
+      color: $color-text;
+      font-size: $font-size-sm;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+      transition: background-color $transition-duration $transition-easing;
+    }
+
+    // Antd tints the sorted column; keep it white so row fills win.
+    .ant-table-tbody > tr > td.ant-table-column-sort {
+      background: $color-white;
+    }
+
+    .ant-table-tbody > tr.ant-table-row:hover > td,
+    .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+      background: $row-hover-bg;
+    }
+
+    // A parent row whose children are shown.
+    .ant-table-tbody > tr.ant-table-row:has(> td [aria-expanded='true']) > td {
+      background: $row-expanded-bg;
+    }
+
+    .ant-table-tbody > tr.ant-table-row-selected > td,
+    .ant-table-tbody > tr.ant-table-row-selected:hover > td,
+    .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-row-hover {
+      background: $row-active-bg;
+    }
+
+    // Expanded content of `expandedRowRender`.
+    .ant-table-tbody > tr.ant-table-expanded-row > td {
+      height: auto;
+      padding: $space-4;
+      background: $color-page;
+      white-space: normal;
+    }
+
+    // -- Empty --
+    .ant-table-tbody > tr.ant-table-placeholder > td,
+    .ant-table-tbody > tr.ant-table-placeholder:hover > td {
+      height: auto;
+      padding: 0;
+      background: $color-white;
+    }
+
+    // -- Tree indent and caret --
+    .ant-table-row-indent {
+      display: inline-block;
+      height: 1px;
+      vertical-align: middle;
+    }
+
+    // -- Loading --
+    .ant-spin-nested-loading > div > .ant-spin {
+      max-height: none;
+    }
+
+    .ant-spin-dot-holder,
+    .ant-spin-dot {
+      color: $color-primary;
+    }
+
+    .ant-spin-dot-item {
+      background: $color-primary;
+    }
+
+    .ant-spin-container::after {
+      background: $color-white;
+    }
+  }
+}
+
+// Ant Design adds these to `th`/`td`; they come from the column config.
+.root .table :global(.ant-table-thead > tr > th).groupHeader {
+  height: $group-row-height;
+  color: $color-text-subtle;
+  font-size: $group-font-size;
+  font-weight: $font-weight-semibold;
+  letter-spacing: $group-letter-spacing;
+  text-align: start;
+  text-transform: uppercase;
+}
+
+.root .table :global(.ant-table-thead > tr > th).sectionStart,
+.root .table :global(.ant-table-tbody > tr > td).sectionStart,
+.root .table :global(.ant-table-summary > tr > td).sectionStart {
+  border-inline-start: $border-width solid $color-line;
+}
+
+.root .table :global(.ant-table-tbody > tr > td).highlight {
+  background: $highlight-bg;
+}
+
+// ---- Rows ------------------------------------------------------------------
+.clickable {
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid $color-focus-ring;
+    outline-offset: -2px;
+  }
+}
+
+.root .table :global(.ant-table-tbody) > tr.active > td,
+.root .table :global(.ant-table-tbody) > tr.active:hover > td {
+  background: $row-active-bg;
+}
+
+// ---- Total row -------------------------------------------------------------
+.root .table :global(.ant-table-summary) > tr.totalRow > td {
+  background: $total-bg;
+  font-weight: $font-weight-semibold;
+}
+
+.root .table :global(.ant-table-summary) > tr.totalRow > td.highlight {
+  background: $highlight-total-bg;
+}
+
+.totalLabel {
+  display: inline-flex;
+  align-items: baseline;
+  gap: $space-1;
+}
+
+.totalCaption {
+  color: $color-text-subtle;
+  font-size: $total-caption-font-size;
+  font-weight: $font-weight-regular;
+}
+
+// ---- Expand caret ----------------------------------------------------------
+.expandButton {
+  @include reset-button;
+  @include interactive-transition;
+  @include focus-ring;
+
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: $expand-size;
+  height: $expand-size;
+  margin-inline: -4px 4px;
+  border-radius: $expand-radius;
+  color: $color-text-subtle;
+  vertical-align: middle;
+  cursor: pointer;
+
+  > svg {
+    transition: transform $transition-duration $transition-easing;
+  }
+
+  &:hover,
+  &[aria-expanded='true'],
+  &[data-loading] {
+    background: $expand-bg;
+    color: $color-text;
+  }
+
+  &[aria-expanded='true'] > svg {
+    transform: rotate(90deg);
+  }
+
+  &[data-loading] {
+    cursor: progress;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    > svg {
+      transition: none;
+    }
+  }
+}
+
+// Keeps leaf rows aligned with rows that have a caret.
+.expandSpacer {
+  display: inline-block;
+  width: $expand-size;
+  margin-inline: -4px 4px;
+  vertical-align: middle;
+}
+
+.spinner {
+  box-sizing: border-box;
+  width: $spinner-size;
+  height: $spinner-size;
+  border: 2px solid $color-primary;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  animation: table-spin 0.8s linear infinite;
+
+  @media (prefers-reduced-motion: reduce) {
+    animation-duration: 2.4s;
+  }
+}
+
+@keyframes table-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ---- Selection -------------------------------------------------------------
+// The project Checkbox, trimmed to a bare box inside a cell.
+.selection {
+  display: inline-flex;
+  vertical-align: middle;
+
+  label {
+    min-height: 0;
+    padding: 0;
+
+    &:hover {
+      background: transparent;
+    }
+  }
+}
+
+// ---- Empty -----------------------------------------------------------------
+.empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: $empty-height;
+  padding: $space-5;
+  color: $color-text-subtle;
+  font-size: $font-size-sm;
+  white-space: normal;
+}
+
+// ---- Footer (pagination) ---------------------------------------------------
+.root .table :global(.ant-table-pagination).pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2 3px;
+  margin: 0;
+  padding: 10px $toolbar-padding-x;
+  border-top: $border-width solid $color-line;
+  font-family: $font-family-base;
+
+  :global {
+    .ant-pagination-total-text {
+      // Takes its own line when the footer is too narrow for everything.
+      flex: 1 1 200px;
+      order: 0;
+      height: auto;
+      margin: 0;
+      color: $color-text-subtle;
+      font-size: $footer-font-size;
+      line-height: $header-line-height;
+    }
+
+    // Antd hides this below 576px; keep it so phones can change page size.
+    .ant-pagination-options {
+      display: inline-flex;
+      order: 1;
+      margin: 0 $space-4 0 0;
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-item,
+    .ant-pagination-jump-prev,
+    .ant-pagination-jump-next,
+    .ant-pagination-next {
+      order: 2;
+      margin: 0;
+    }
+
+    .ant-pagination-item {
+      min-width: $pager-height;
+      height: $pager-height;
+      border: $border-width solid transparent;
+      border-radius: $radius-sm;
+      background: transparent;
+      line-height: $pager-height - 2px;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+
+      a {
+        padding: 0 $space-1;
+        color: $color-text-muted;
+      }
+
+      &:hover {
+        background: $color-surface-hover;
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+      }
+    }
+
+    .ant-pagination-item-active {
+      border-color: $color-border;
+      background: $color-surface-hover;
+
+      a,
+      &:hover a {
+        color: $color-text;
+      }
+    }
+
+    .ant-pagination-prev,
+    .ant-pagination-next {
+      min-width: $pager-arrow-width;
+      height: $pager-height;
+      border-radius: $radius-sm;
+
+      &:hover:not(.ant-pagination-disabled) {
+        background: $color-surface-hover;
+      }
+
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+      }
+    }
+
+    .ant-pagination-disabled {
+      opacity: $pager-disabled-opacity;
+    }
+
+    .ant-pagination-item-ellipsis {
+      color: $color-text-subtle;
+    }
+  }
+}
+
+.pagerArrow {
+  @include reset-button;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: $color-text-muted;
+  cursor: inherit;
+}
+
+// ---- Rows per page (Ant Design Select) ------------------------------------
+// Trigger: Figma "button listbox.ddbtn" pill. Panel: same look as the project
+// Dropdown (border, 10px radius, popup shadow).
+.root .table .rowsPerPage {
+  @include interactive-transition;
+
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  box-sizing: border-box;
+  height: $pager-height;
+  min-height: 0;
+  padding: 0 10px 0 13px;
+  border: $border-width solid $color-border;
+  border-radius: $radius-pill;
+  background: $color-white;
+  font-family: $font-family-base;
+  font-size: $footer-font-size;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    border-color: $color-border-strong;
+  }
+
+  &:global(.ant-select-focused) {
+    border-color: $color-border-strong;
+    box-shadow: 0 0 0 $focus-ring-width $color-focus-ring;
+  }
+
+  &:global(.ant-select-disabled) {
+    opacity: $opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.root .table .rowsPerPageLabel {
+  margin: 0;
+  padding: 0;
+  color: $color-text-subtle;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.root .table .rowsPerPageValue {
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+}
+
+.root .table .rowsPerPageArrow {
+  display: inline-flex;
+  margin: 0;
+  color: $color-text-muted;
+
+  > svg {
+    transition: transform $transition-duration $transition-easing;
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none;
+    }
+  }
+}
+
+.root .table .rowsPerPage:global(.ant-select-open) .rowsPerPageArrow > svg {
+  transform: rotate(180deg);
+}
+
+// The panel is portaled to <body>, so it is styled on its own.
+:global(.ant-select-dropdown).rowsPerPagePopup {
+  min-width: 72px;
+  padding: $space-1;
+  border: $border-width solid $color-border;
+  border-radius: 10px;
+  background: $color-white;
+  box-shadow: $shadow-popup;
+  font-family: $font-family-base;
+}
+
+:global(.ant-select-dropdown).rowsPerPagePopup .rowsPerPageOption {
+  display: flex;
+  align-items: center;
+  min-height: $pager-height;
+  padding: 0 $space-3;
+  border-radius: 6px;
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+
+  // Mouse hover and keyboard (arrow keys) highlight.
+  &:global(.ant-select-item-option-active) {
+    background: $color-surface-hover;
+  }
+
+  &:global(.ant-select-item-option-selected) {
+    background: $color-primary-soft;
+    color: $color-primary;
+    font-weight: $font-weight-semibold;
+  }
+}

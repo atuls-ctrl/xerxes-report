@@ -1,0 +1,65 @@
+@use '../../styles' as *;
+
+// Figma "div.tbar" → Group by.
+$trigger-height: 28px;
+$chip-height: 24px;
+$chip-radius: 6px;
+$separator-font-size: 11px;
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-family: $font-family-base;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+}
+
+.trigger {
+  @include reset-button;
+  @include interactive-transition;
+  @include focus-ring;
+  @include disabled-state;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  box-sizing: border-box;
+  height: $trigger-height;
+  padding-inline: 1px $space-2;
+  border: $border-width solid transparent;
+  border-radius: $radius-sm;
+  color: $color-text-muted;
+  cursor: pointer;
+
+  @include hover {
+    border-color: $color-border;
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: $chip-height;
+  padding-inline: $space-2;
+  border-radius: $chip-radius;
+  background: $color-surface-hover;
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+.separator {
+  color: $color-text-subtle;
+  font-size: $separator-font-size;
+  font-weight: $font-weight-medium;
+}
