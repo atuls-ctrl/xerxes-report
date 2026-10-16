@@ -83,7 +83,7 @@ export interface TableProps<RecordType extends object> extends Omit<
   onDensityChange?: (density: TableDensity) => void
   /** Shows the Compact / Comfortable button in the toolbar. */
   showDensityToggle?: boolean
-  /** Toolbar content on the left, e.g. `<TableGroupBy />`. */
+  /** Toolbar content on the left, e.g. a selection count. */
   toolbar?: ReactNode
   /** Toolbar content before the search, e.g. a switch. */
   extra?: ReactNode

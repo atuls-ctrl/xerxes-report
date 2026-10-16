@@ -9,8 +9,6 @@ export type {
   TableSearchProps,
   TableTotalRow,
 } from './Table'
-export { TableGroupBy } from './TableGroupBy'
-export type { TableGroupByProps } from './TableGroupBy'
 export { TableRowLabel, TableTag, TableValue } from './TableCells'
 export type {
   TableRowLabelProps,

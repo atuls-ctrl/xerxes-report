@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite'
 import type { ReactNode } from 'react'
-import { fn } from 'storybook/test'
-import { TableGroupBy, TableRowLabel, TableTag, TableValue } from '..'
+import { TableRowLabel, TableTag, TableValue } from '..'
 
 const meta = {
   title: 'Components/Table/Cells',
@@ -128,20 +127,6 @@ export const RowLabels: Story = {
       <Cell title="Leaf row label (level 3)" state="default">
         <TableRowLabel title="3439" meta="P2P" />
       </Cell>
-    </div>
-  ),
-}
-
-export const GroupBy: Story = {
-  parameters: { layout: 'padded' },
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <TableGroupBy
-        levels={['Campaign', 'App bundle', 'Publisher']}
-        onClick={fn()}
-      />
-      <TableGroupBy levels={['Publisher']} onClick={fn()} />
-      <TableGroupBy levels={['Country', 'Sales Manager']} disabled />
     </div>
   ),
 }

@@ -4,7 +4,7 @@ import { fn, userEvent, within } from 'storybook/test'
 import { Button } from '../../Button'
 import { Icon } from '../../icons'
 import { ToggleButton } from '../../ToggleButton'
-import { Table, TableGroupBy, TableRowLabel, TableValue } from '..'
+import { Table, TableRowLabel, TableValue } from '..'
 import type { TableColumnsType, TableProps } from '..'
 import {
   ADVERTISERS,
@@ -71,10 +71,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const groupBy = (
-  <TableGroupBy levels={['Campaign', 'App bundle', 'Publisher']} />
-)
-
 const columnsButton = (count: string) => (
   <Button size="md" icon={<Icon name="cols" size={16} />} suffix={count}>
     Columns
@@ -95,7 +91,7 @@ function filterTree(rows: CampaignRow[], query: string): CampaignRow[] {
   })
 }
 
-// Full report card: group-by, search, density, columns, total row, sorting,
+// Full report card: search, density, columns, total row, sorting,
 // pagination and a row click that marks the row whose drawer is open.
 function ReportTable(args: CampaignTableProps) {
   const [query, setQuery] = useState('')
@@ -105,7 +101,6 @@ function ReportTable(args: CampaignTableProps) {
     <Table<CampaignRow>
       {...args}
       dataSource={rows}
-      toolbar={groupBy}
       actions={columnsButton('19 of 138')}
       search={{ value: query, onSearch: setQuery }}
       {...(activeKey !== undefined && { activeRowKey: activeKey })}
@@ -356,9 +351,6 @@ export const AdvertiserOverview: StoryObj = {
       columns={ADVERTISER_COLUMNS}
       dataSource={ADVERTISERS}
       totalRow={ADVERTISER_TOTALS}
-      toolbar={
-        <TableGroupBy levels={['Country', 'Sales Manager', 'Campaign']} />
-      }
       actions={columnsButton('8 of 138')}
       search
       showDensityToggle
@@ -374,7 +366,6 @@ export const FraudAndCtit: StoryObj = {
     <Table
       columns={FRAUD_COLUMNS}
       dataSource={FRAUD_ROWS}
-      toolbar={<TableGroupBy levels={['Publisher']} />}
       search
       rowNoun="publisher rows"
     />
@@ -450,7 +441,6 @@ export const PublisherShareOfInstalls: StoryObj = {
         columns={columns}
         dataSource={PUBLISHERS}
         totalRow={PUBLISHER_TOTALS}
-        toolbar={<TableGroupBy levels={['Publisher']} />}
         extra={
           <ToggleButton
             size="sm"
