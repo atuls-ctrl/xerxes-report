@@ -29,13 +29,13 @@ const TEAMS: ToggleButtonGroupOption<Team>[] = [
 ]
 
 // Report dimensions the campaign rows can be grouped by.
-const GROUP_BY_OPTIONS: TableGroupByOption[] = [
+const GROUP_BY_OPTIONS = [
   { value: 'bundle', label: 'App bundle' },
   { value: 'publisher', label: 'Publisher' },
   { value: 'site', label: 'Site ID' },
   { value: 'campaign', label: 'Campaign' },
   { value: 'country', label: 'Country' },
-]
+] satisfies TableGroupByOption[]
 
 type ChartType = 'line' | 'bar'
 
