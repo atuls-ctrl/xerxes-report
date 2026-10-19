@@ -14,6 +14,7 @@ import type {
 import type { SorterResult, SortOrder } from 'antd/es/table/interface'
 import {
   createContext,
+  Fragment,
   isValidElement,
   useContext,
   useState,
@@ -27,7 +28,8 @@ import {
   type ReactNode,
 } from 'react'
 import { Button } from '../Button'
-import { Checkbox } from '../Checkbox'
+import { Checkbox, CheckboxGroup } from '../Checkbox'
+import { Dropdown } from '../Dropdown'
 import { Icon } from '../icons'
 import { Input, type InputProps } from '../Input'
 import styles from './Table.module.scss'
@@ -69,6 +71,32 @@ export interface TableSearchProps extends Pick<
   onSearch?: (value: string) => void
 }
 
+export interface TableGroupByOption {
+  value: string
+  label: ReactNode
+}
+
+export interface TableGroupByProps {
+  /** Dimensions the rows can be grouped by. */
+  options: TableGroupByOption[]
+  /** Picked dimensions, outermost first. */
+  value?: string[]
+  defaultValue?: string[]
+  onChange?: (value: string[]) => void
+  /** Text before the chips. */
+  label?: ReactNode
+  /** Trigger text when nothing is picked. */
+  placeholder?: ReactNode
+}
+
+export interface TableColumnsControlProps {
+  /** Hidden leaf columns, by `key` (or `dataIndex` when there is no key). */
+  hiddenKeys?: string[]
+  /** Button text. */
+  label?: ReactNode
+  onClick?: (event: MouseEvent<HTMLButtonElement>) => void
+}
+
 export interface TableFooterRange {
   start: number
   end: number
@@ -92,10 +120,17 @@ export interface TableProps<RecordType extends object> extends Omit<
   toolbar?: ReactNode
   /** Toolbar content before the search, e.g. a switch. */
   extra?: ReactNode
-  /** Toolbar content at the end, e.g. a Columns button. */
+  /** Toolbar content at the end, after the Columns button. */
   actions?: ReactNode
   /** Search box in the toolbar. `true` uses the defaults. */
   search?: boolean | TableSearchProps
+  /**
+   * "Group by" picker on the left of the toolbar. It only reports the
+   * picked dimensions; build the grouped `dataSource` from them.
+   */
+  groupBy?: TableGroupByProps
+  /** Columns button with the "8 of 136" count. `true` uses the defaults. */
+  columnsControl?: boolean | TableColumnsControlProps
   /** Pinned row under the header with the totals. */
   totalRow?: TableTotalRow<RecordType>
   /** Fires on row click and on Enter / Space when a row is focused. */
@@ -192,6 +227,33 @@ function getLeafColumns<RecordType>(
   return columns.flatMap((column) =>
     'children' in column ? getLeafColumns(column.children) : [column],
   )
+}
+
+// Ids of every leaf column, matched against `hiddenKeys`.
+function getLeafColumnIds<RecordType>(
+  columns: TableColumnsType<RecordType>,
+): string[] {
+  return columns.flatMap((column) =>
+    isGroup(column)
+      ? getLeafColumnIds(column.children)
+      : [getColumnId(column.key, column.dataIndex)],
+  )
+}
+
+// Drops hidden leaf columns, and groups left with no columns.
+function removeHiddenColumns<RecordType>(
+  columns: TableColumnsType<RecordType>,
+  hidden: ReadonlySet<string>,
+): TableColumnsType<RecordType> {
+  return columns.flatMap((column) => {
+    if (isGroup(column)) {
+      const children = removeHiddenColumns(column.children, hidden)
+      return children.length > 0 ? [{ ...column, children }] : []
+    }
+    return hidden.has(getColumnId(column.key, column.dataIndex))
+      ? []
+      : [column]
+  })
 }
 
 function getValue(record: object, dataIndex: unknown): unknown {
@@ -500,6 +562,92 @@ const renderPagerItem: NonNullable<TablePaginationConfig['itemRender']> = (
   )
 }
 
+// ---- Toolbar: Group by -----------------------------------------------------
+// Figma `div.tbar`: "Group by" label, then the picked dimensions as chips
+// joined by "›". The menu lists every dimension with its pick order; picks
+// are a draft until Apply, and Reset goes back to `defaultValue`.
+function GroupByControl({
+  options,
+  value,
+  defaultValue = [],
+  onChange,
+  label = 'Group by',
+  placeholder = 'None',
+}: TableGroupByProps) {
+  const [internalValue, setInternalValue] = useState(defaultValue)
+  const selected = value ?? internalValue
+  const [draft, setDraft] = useState(selected)
+
+  const changeValue = (next: string[]) => {
+    if (value === undefined) setInternalValue(next)
+    onChange?.(next)
+  }
+
+  const labelOf = (item: string) =>
+    options.find((option) => option.value === item)?.label ?? item
+
+  return (
+    <div className={styles.groupBy}>
+      <span className={styles.groupByLabel}>
+        <Icon name="layers" size={16} aria-hidden="true" />
+        {label}
+      </span>
+      <Dropdown
+        className={styles.groupByDropdown}
+        variant="ghost"
+        size="sm"
+        title="Group rows by"
+        label={
+          <span className={styles.groupByValue}>
+            {selected.length > 0 ? (
+              selected.map((item, index) => (
+                <Fragment key={item}>
+                  {index > 0 && (
+                    <span
+                      className={styles.groupBySeparator}
+                      aria-hidden="true"
+                    >
+                      ›
+                    </span>
+                  )}
+                  <span className={styles.groupChip}>{labelOf(item)}</span>
+                </Fragment>
+              ))
+            ) : (
+              <span className={styles.groupByPlaceholder}>{placeholder}</span>
+            )}
+            <Icon
+              name="down"
+              size={14}
+              className={styles.groupByArrow}
+              aria-hidden="true"
+            />
+          </span>
+        }
+        onOpenChange={(open) => {
+          // Start each visit from what is applied.
+          if (open) setDraft(selected)
+        }}
+        clearLabel="Reset"
+        onClear={() => {
+          setDraft(defaultValue)
+        }}
+        onApply={() => {
+          changeValue(draft)
+        }}
+      >
+        <CheckboxGroup
+          aria-label="Group rows by"
+          ordered
+          options={options}
+          value={draft}
+          onChange={setDraft}
+        />
+      </Dropdown>
+    </div>
+  )
+}
+
 // ---- Table -----------------------------------------------------------------
 export function Table<RecordType extends object>({
   columns = [],
@@ -512,6 +660,8 @@ export function Table<RecordType extends object>({
   extra,
   actions,
   search = false,
+  groupBy,
+  columnsControl,
   totalRow,
   onRowClick,
   activeRowKey,
@@ -548,7 +698,25 @@ export function Table<RecordType extends object>({
     onDensityChange?.(next)
   }
 
-  const decoratedColumns = decorateColumns(columns)
+  // ---- Column visibility ----
+  const columnsProps: TableColumnsControlProps | undefined =
+    columnsControl === true
+      ? {}
+      : columnsControl === false
+        ? undefined
+        : columnsControl
+  const columnIds = getLeafColumnIds(columns)
+  const hiddenKeys = (columnsProps?.hiddenKeys ?? []).filter((key) =>
+    columnIds.includes(key),
+  )
+  // "8 of 136" on the Columns button.
+  // const columnsCount = `${String(columnIds.length - hiddenKeys.length)} of ${String(columnIds.length)}`
+  const shownColumns =
+    hiddenKeys.length > 0
+      ? removeHiddenColumns(columns, new Set(hiddenKeys))
+      : columns
+
+  const decoratedColumns = decorateColumns(shownColumns)
   const leafColumns = getLeafColumns(decoratedColumns)
   const loadingKeys = new Set(loadingRowKeys)
 
@@ -845,8 +1013,10 @@ export function Table<RecordType extends object>({
 
   // ---- Toolbar ----
   const searchProps = search === true ? {} : search || undefined
+  const hasToolbarStart = groupBy !== undefined || toolbar !== undefined
   const hasToolbar =
-    toolbar !== undefined ||
+    hasToolbarStart ||
+    columnsProps !== undefined ||
     extra !== undefined ||
     actions !== undefined ||
     searchProps !== undefined ||
@@ -864,8 +1034,11 @@ export function Table<RecordType extends object>({
     >
       {hasToolbar && (
         <div className={styles.toolbar}>
-          {toolbar !== undefined && (
-            <div className={styles.toolbarStart}>{toolbar}</div>
+          {hasToolbarStart && (
+            <div className={styles.toolbarStart}>
+              {groupBy && <GroupByControl {...groupBy} />}
+              {toolbar}
+            </div>
           )}
           <div className={styles.toolbarEnd}>
             {extra}
@@ -901,6 +1074,18 @@ export function Table<RecordType extends object>({
                 onClick={toggleDensity}
               >
                 {isCompact ? 'Comfortable' : 'Compact'}
+              </Button>
+            )}
+            {columnsProps && (
+              <Button
+                size="md"
+                icon={<Icon name="cols" size={16} />}
+                // suffix={columnsCount}
+                // {...(columnsProps.onClick !== undefined && {
+                //   onClick: columnsProps.onClick,
+                // })}
+              >
+                {columnsProps.label ?? 'Columns'}
               </Button>
             )}
             {actions}

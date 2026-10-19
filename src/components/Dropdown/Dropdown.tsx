@@ -45,6 +45,8 @@ export interface DropdownProps {
   variant?: ButtonVariant
   size?: ButtonSize
   icon?: ReactNode
+  /** Muted text after the trigger label, e.g. a count. */
+  suffix?: ReactNode
   disabled?: boolean
   className?: string
   id?: string
@@ -76,6 +78,7 @@ export function Dropdown({
   variant = 'primary',
   size = 'sm',
   icon,
+  suffix,
   disabled = false,
   className,
   id,
@@ -177,6 +180,7 @@ export function Dropdown({
         variant={variant}
         size={size}
         icon={icon}
+        suffix={suffix}
         disabled={disabled}
         aria-haspopup="dialog"
         aria-expanded={isOpen}

@@ -46,8 +46,7 @@ $nested-pager-indent: 34px;
 $rows-menu-width: 228px;
 $rows-menu-radius: 10px;
 $rows-menu-item-height: 34px;
-$rows-menu-shadow:
-  0 16px 40px -12px rgba(16, 24, 40, 0.28),
+$rows-menu-shadow: 0 16px 40px -12px rgba(16, 24, 40, 0.28),
   0 2px 6px rgba(16, 24, 40, 0.08);
 
 .root {
@@ -58,8 +57,6 @@ $rows-menu-shadow:
   box-sizing: border-box;
   min-width: 0;
   max-width: 100%;
-  // `clip` keeps the rounded corners without breaking the sticky header.
-  overflow: clip;
   border: $border-width solid $color-line;
   border-radius: $radius-md;
   background: $color-white;
@@ -74,7 +71,25 @@ $rows-menu-shadow:
 }
 
 // ---- Toolbar ---------------------------------------------------------------
+// Rounded bottom corners. Clipped here, not on `.root`, so the toolbar
+// dropdowns can overflow the card; `clip` keeps the sticky header working.
+// `isolation` keeps antd's sticky z-indexes (43) under the toolbar dropdowns.
+.root > .table {
+  isolation: isolate;
+  overflow: clip;
+  border-end-start-radius: calc(#{$radius-md} - #{$border-width});
+  border-end-end-radius: calc(#{$radius-md} - #{$border-width});
+
+  &:first-child {
+    border-start-start-radius: calc(#{$radius-md} - #{$border-width});
+    border-start-end-radius: calc(#{$radius-md} - #{$border-width});
+  }
+}
+
 .toolbar {
+  // Keeps the toolbar dropdowns above the table.
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -103,6 +118,66 @@ $rows-menu-shadow:
   background: $color-surface-hover;
 }
 
+// ---- Toolbar: Group by -----------------------------------------------------
+.groupBy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.groupByLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+  line-height: $line-height-tight;
+  white-space: nowrap;
+}
+
+// Ghost trigger around the chips: no fill on hover (the chips already use
+// the hover fill), a border instead.
+.groupByDropdown > button[data-size] {
+  --button-padding-x: 6px;
+  --button-hover-bg: transparent;
+  --button-hover-border: #{$color-border};
+}
+
+.groupByValue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.groupChip {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding-inline: 8px;
+  border-radius: 6px;
+  background: $color-surface-hover;
+  color: $color-text;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+}
+
+.groupBySeparator {
+  color: $color-text-subtle;
+  font-size: $font-size-2xs;
+}
+
+.groupByPlaceholder {
+  color: $color-text-subtle;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-regular;
+}
+
+.groupByArrow {
+  flex-shrink: 0;
+  color: $color-text-subtle;
+}
+
 // ---- Table -----------------------------------------------------------------
 .root .table {
   min-width: 0;
@@ -123,7 +198,7 @@ $rows-menu-shadow:
     }
 
     // -- Header --
-    .ant-table-thead > tr > th {
+    .ant-table-thead>tr>th {
       height: $header-row-height;
       padding: 0 $cell-padding-x;
       border-bottom: $border-width solid $color-line;
@@ -142,12 +217,12 @@ $rows-menu-shadow:
 
     // A plain column next to groups spans both header rows; its text
     // lines up with the lower row, as in Figma.
-    .ant-table-thead > tr > th[rowspan]:not([rowspan='1']) {
+    .ant-table-thead>tr>th[rowspan]:not([rowspan='1']) {
       vertical-align: bottom;
       padding-bottom: calc(($header-row-height - $header-line-height) / 2);
     }
 
-    .ant-table-thead > tr > th.ant-table-column-has-sorters {
+    .ant-table-thead>tr>th.ant-table-column-has-sorters {
       cursor: pointer;
 
       &:hover {
@@ -156,7 +231,7 @@ $rows-menu-shadow:
       }
     }
 
-    .ant-table-thead > tr > th.ant-table-column-sort {
+    .ant-table-thead>tr>th.ant-table-column-sort {
       background: $color-white;
     }
 
@@ -222,8 +297,8 @@ $rows-menu-shadow:
     }
 
     // -- Body --
-    .ant-table-tbody > tr > td,
-    .ant-table-summary > tr > td {
+    .ant-table-tbody>tr>td,
+    .ant-table-summary>tr>td {
       height: var(--table-row-height);
       padding: 0 $cell-padding-x;
       border-bottom: $border-width solid $color-line;
@@ -236,28 +311,28 @@ $rows-menu-shadow:
     }
 
     // Antd tints the sorted column; keep it white so row fills win.
-    .ant-table-tbody > tr > td.ant-table-column-sort {
+    .ant-table-tbody>tr>td.ant-table-column-sort {
       background: $color-white;
     }
 
-    .ant-table-tbody > tr.ant-table-row:hover > td,
-    .ant-table-tbody > tr > td.ant-table-cell-row-hover {
+    .ant-table-tbody>tr.ant-table-row:hover>td,
+    .ant-table-tbody>tr>td.ant-table-cell-row-hover {
       background: $row-hover-bg;
     }
 
     // A parent row whose children are shown.
-    .ant-table-tbody > tr.ant-table-row:has(> td [aria-expanded='true']) > td {
+    .ant-table-tbody>tr.ant-table-row:has(> td [aria-expanded='true'])>td {
       background: $row-expanded-bg;
     }
 
-    .ant-table-tbody > tr.ant-table-row-selected > td,
-    .ant-table-tbody > tr.ant-table-row-selected:hover > td,
-    .ant-table-tbody > tr.ant-table-row-selected > td.ant-table-cell-row-hover {
+    .ant-table-tbody>tr.ant-table-row-selected>td,
+    .ant-table-tbody>tr.ant-table-row-selected:hover>td,
+    .ant-table-tbody>tr.ant-table-row-selected>td.ant-table-cell-row-hover {
       background: $row-active-bg;
     }
 
     // Expanded content of `expandedRowRender`.
-    .ant-table-tbody > tr.ant-table-expanded-row > td {
+    .ant-table-tbody>tr.ant-table-expanded-row>td {
       height: auto;
       padding: $space-4;
       background: $color-page;
@@ -265,8 +340,8 @@ $rows-menu-shadow:
     }
 
     // -- Empty --
-    .ant-table-tbody > tr.ant-table-placeholder > td,
-    .ant-table-tbody > tr.ant-table-placeholder:hover > td {
+    .ant-table-tbody>tr.ant-table-placeholder>td,
+    .ant-table-tbody>tr.ant-table-placeholder:hover>td {
       height: auto;
       padding: 0;
       background: $color-white;
@@ -280,7 +355,7 @@ $rows-menu-shadow:
     }
 
     // -- Loading --
-    .ant-spin-nested-loading > div > .ant-spin {
+    .ant-spin-nested-loading>div>.ant-spin {
       max-height: none;
     }
 
@@ -330,18 +405,18 @@ $rows-menu-shadow:
   }
 }
 
-.root .table :global(.ant-table-tbody) > tr.active > td,
-.root .table :global(.ant-table-tbody) > tr.active:hover > td {
+.root .table :global(.ant-table-tbody)>tr.active>td,
+.root .table :global(.ant-table-tbody)>tr.active:hover>td {
   background: $row-active-bg;
 }
 
 // ---- Total row -------------------------------------------------------------
-.root .table :global(.ant-table-summary) > tr.totalRow > td {
+.root .table :global(.ant-table-summary)>tr.totalRow>td {
   background: $total-bg;
   font-weight: $font-weight-semibold;
 }
 
-.root .table :global(.ant-table-summary) > tr.totalRow > td.highlight {
+.root .table :global(.ant-table-summary)>tr.totalRow>td.highlight {
   background: $highlight-total-bg;
 }
 
@@ -375,7 +450,7 @@ $rows-menu-shadow:
   vertical-align: middle;
   cursor: pointer;
 
-  > svg {
+  >svg {
     transition: transform $transition-duration $transition-easing;
   }
 
@@ -386,7 +461,7 @@ $rows-menu-shadow:
     color: $color-text;
   }
 
-  &[aria-expanded='true'] > svg {
+  &[aria-expanded='true']>svg {
     transform: rotate(90deg);
   }
 
@@ -395,7 +470,7 @@ $rows-menu-shadow:
   }
 
   @media (prefers-reduced-motion: reduce) {
-    > svg {
+    >svg {
       transition: none;
     }
   }
@@ -461,6 +536,7 @@ $rows-menu-shadow:
 // Page buttons, arrows and the page gap of an Ant Design Pagination.
 // `$current` is `outlined` (table footer) or `filled` (nested pager).
 @mixin pager-items($height, $font-size, $current: outlined) {
+
   .ant-pagination-prev,
   .ant-pagination-item,
   .ant-pagination-jump-prev,
@@ -506,7 +582,7 @@ $rows-menu-shadow:
   .ant-pagination-item-active {
     font-weight: $font-weight-semibold;
 
-    @if $current == filled {
+    @if $current ==filled {
       border-color: $color-primary;
       background: $color-primary;
 
@@ -519,7 +595,9 @@ $rows-menu-shadow:
       &:active {
         background: $color-primary;
       }
-    } @else {
+    }
+
+    @else {
       border-color: $color-border;
       background: $color-surface-hover;
 
@@ -636,7 +714,7 @@ $rows-menu-shadow:
 }
 
 // ---- Nested pager (under an expanded row) ----------------------------------
-.root .table :global(.ant-table-tbody) > tr.childPagerRow > td {
+.root .table :global(.ant-table-tbody)>tr.childPagerRow>td {
   height: auto;
   padding: $space-2 $cell-padding-x;
   background: $color-white;
@@ -647,10 +725,7 @@ $rows-menu-shadow:
   position: sticky;
   left: 0;
   display: inline-flex;
-  padding-inline-start: calc(
-    #{$nested-pager-indent} + (var(--child-pager-level, 1) - 1) *
-      #{$indent-size}
-  );
+  padding-inline-start: calc(#{$nested-pager-indent} + (var(--child-pager-level, 1) - 1) * #{$indent-size});
 
   :global {
     .ant-pagination {
@@ -670,11 +745,9 @@ $rows-menu-shadow:
       line-height: $header-line-height;
     }
 
-    @include pager-items(
-      $nested-pager-height,
+    @include pager-items($nested-pager-height,
       $footer-font-size,
-      $current: filled
-    );
+      $current: filled);
   }
 }
 
@@ -733,7 +806,7 @@ $rows-menu-shadow:
   margin: 0;
   color: $color-text-muted;
 
-  > svg {
+  >svg {
     transition: transform $transition-duration $transition-easing;
 
     @media (prefers-reduced-motion: reduce) {
@@ -742,7 +815,7 @@ $rows-menu-shadow:
   }
 }
 
-.root .table .rowsPerPage:global(.ant-select-open) .rowsPerPageArrow > svg {
+.root .table .rowsPerPage:global(.ant-select-open) .rowsPerPageArrow>svg {
   transform: rotate(180deg);
 }
 
@@ -790,4 +863,9 @@ $rows-menu-shadow:
     display: inline-flex;
     color: $color-primary;
   }
+}
+
+.table_header_content {
+  display: flex;
+  justify-content: space-between;
 }

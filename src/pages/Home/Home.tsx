@@ -5,7 +5,7 @@ import {
   type LineChartSeries,
 } from '../../components/Charts/LineChart'
 import { MetricTile, type MetricTileStatus } from '../../components/MetricTile'
-import { Table } from '../../components/Table'
+import { Table, type TableGroupByOption } from '../../components/Table'
 // Placeholder rows shared with the Table stories until the API is wired up.
 import {
   CAMPAIGNS,
@@ -26,6 +26,15 @@ type Team = 'Allmetrics' | 'Top10bycampaign'
 const TEAMS: ToggleButtonGroupOption<Team>[] = [
   { value: 'Allmetrics', label: 'All metrics' },
   { value: 'Top10bycampaign', label: 'Top 10 by campaign' },
+]
+
+// Report dimensions the campaign rows can be grouped by.
+const GROUP_BY_OPTIONS: TableGroupByOption[] = [
+  { value: 'bundle', label: 'App bundle' },
+  { value: 'publisher', label: 'Publisher' },
+  { value: 'site', label: 'Site ID' },
+  { value: 'campaign', label: 'Campaign' },
+  { value: 'country', label: 'Country' },
 ]
 
 type ChartType = 'line' | 'bar'
@@ -109,7 +118,7 @@ const metrics: Metric[] = [
     value: '2.9%',
     status: 'neutral',
     badge: '0.0 pp',
-  }, 
+  },
 ]
 
 // Search over the label and the muted name, keeping parents of matches.
@@ -199,6 +208,11 @@ export function HomePage() {
           footerHint="Click a row for details"
           showDensityToggle
           search={{ value: query, onSearch: setQuery }}
+          groupBy={{
+            options: GROUP_BY_OPTIONS,
+            defaultValue: ['bundle', 'publisher', 'site'],
+          }}
+          columnsControl
           {...(activeKey !== undefined && { activeRowKey: activeKey })}
           onRowClick={(record) => {
             setActiveKey((current) =>

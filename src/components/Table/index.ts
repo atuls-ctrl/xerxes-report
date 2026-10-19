@@ -1,10 +1,13 @@
 export { Table } from './Table'
 export type {
   TableColumnGroupType,
+  TableColumnsControlProps,
   TableColumnType,
   TableColumnsType,
   TableDensity,
   TableFooterRange,
+  TableGroupByOption,
+  TableGroupByProps,
   TableProps,
   TableSearchProps,
   TableTotalRow,
