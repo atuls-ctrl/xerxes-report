@@ -13,7 +13,40 @@ import {
   CAMPAIGN_TOTALS,
   type CampaignRow,
 } from '../../components/Table/__storybook/tableData'
+import { BarChart } from '../../components/Charts/BarChart'
+import { Icon } from '../../components/icons'
+import {
+  ToggleButtonGroup,
+  type ToggleButtonGroupOption,
+} from '../../components/ToggleButton'
 import styles from './Home.module.scss'
+
+type Team = 'Allmetrics' | 'Top10bycampaign'
+
+const TEAMS: ToggleButtonGroupOption<Team>[] = [
+  { value: 'Allmetrics', label: 'All metrics' },
+  { value: 'Top10bycampaign', label: 'Top 10 by campaign' },
+]
+
+type ChartType = 'line' | 'bar'
+
+// Stroke 1.75 on the 24px grid matches the Figma icons.
+const CHART_TYPES: ToggleButtonGroupOption<ChartType>[] = [
+  {
+    value: 'line',
+    label: 'Line chart',
+    title: 'Line chart',
+    iconOnly: true,
+    icon: <Icon name="linechart" strokeWidth={1.75} />,
+  },
+  {
+    value: 'bar',
+    label: 'Bar chart',
+    title: 'Bar chart',
+    iconOnly: true,
+    icon: <Icon name="barchart" strokeWidth={1.75} />,
+  },
+]
 
 // Placeholder data until the reports API is wired up.
 const categories = [
@@ -76,17 +109,7 @@ const metrics: Metric[] = [
     value: '2.9%',
     status: 'neutral',
     badge: '0.0 pp',
-  },
-  {
-    key: 'cost',
-    name: 'Cost (Payout)',
-    data: [197, 179, 171, 167, 176, 190, 192],
-    formatValue: usd,
-    color: DEFAULT_COLORS[4],
-    value: '$1.3K',
-    status: 'low',
-    badge: '0.8%',
-  },
+  }, 
 ]
 
 // Search over the label and the muted name, keeping parents of matches.
@@ -106,6 +129,7 @@ function filterTree(rows: CampaignRow[], query: string): CampaignRow[] {
 export function HomePage() {
   const [query, setQuery] = useState('')
   const [activeKey, setActiveKey] = useState<Key>()
+  const [chartType, setChartType] = useState<ChartType>('line')
   const rows = filterTree(CAMPAIGNS, query)
 
   return (
@@ -125,19 +149,45 @@ export function HomePage() {
       </section>
 
       <section className={styles.chartCard} aria-label="Metric trends">
-        <div className={styles.title_main}>
-          <div className={styles.heading}>
-            All metrics over time
+
+        <div className={styles.table_header_content}>
+          <div className={styles.title_main}>
+            <div className={styles.heading}>All metrics over time</div>
+            <div className={styles.subtext}>
+              Last 7 days · 12 Oct – 18 Oct · each line is scaled to its own
+              peak; hover for the real values
+            </div>
           </div>
-          <div className={styles.subtext}>
-            Last 7 days · 12 Oct – 18 Oct · each line is scaled to its own peak; hover for the real values</div>
+          <div className={styles.headerActions}>
+            <ToggleButtonGroup<Team>
+              options={TEAMS}
+              defaultValue="Allmetrics"
+              aria-label="Team"
+            />
+            <ToggleButtonGroup<ChartType>
+              options={CHART_TYPES}
+              value={chartType}
+              onChange={setChartType}
+              aria-label="Chart type"
+            />
+          </div>
         </div>
-        <LineChart
-          series={metrics}
-          categories={categories}
-          normalize
-          height={270}
-        />
+
+        {chartType === 'line' ? (
+          <LineChart
+            series={metrics}
+            categories={categories}
+            normalize
+            height={270}
+          />
+        ) : (
+          <BarChart
+            series={metrics}
+            categories={categories}
+            normalize
+            height={270}
+          />
+        )}
       </section>
 
       <section aria-label="Campaign report">

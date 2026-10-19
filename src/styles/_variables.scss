@@ -1,5 +1,6 @@
 // Design tokens shared by every component. Values come from the Figma file
 // "Xerxes AI Reports". Import with `@use '../../styles' as *;`.
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
 // ---- Colors ----------------------------------------------------------------
 $color-white: #fff;
@@ -27,6 +28,13 @@ $color-warning: #f59e0b;
 $color-focus-ring: rgba(42, 120, 214, 0.4);
 
 $color-line: #E6E8EC;
+
+// Off-white app chrome behind the sidebar.
+$color-surface-side: #fafafb;
+
+// Status dots (Figma `good` / `warn`): live vs. needs-attention data sources.
+$color-status-good: #0ca30c;
+$color-status-warn: #fab219;
 
 // ---- Spacing (4px base) ----------------------------------------------------
 $space-1: 4px;

@@ -1,16 +1,21 @@
 @use '../../styles' as *;
 
-$sidebar-width: 240px;
+$sidebar-width: 223px;
 $sidebar-width-collapsed: 64px;
 $sidebar-duration: 0.2s;
+$brand-height: 66px;
 $nav-padding-x: $space-3;
-$item-height: 36px;
+$item-padding-y: 7px;
+$item-font-size: 13.5px;
 $item-icon-size: 18px;
 $item-gap: $space-3;
+$child-padding: 6px $space-2;
+$child-radius: 6px;
+$font-weight-child-active: 550;
 $active-bar-width: 3px;
 $active-bar-height: 20px;
 $mark-size: 28px;
-$dot-size: 6px;
+$dot-size: 7px;
 
 // Layout: brand row, scrollable nav, pinned footer. The width drives the
 // AppLayout column, so the content area animates with the rail.
@@ -26,8 +31,8 @@ $dot-size: 6px;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-  border-inline-end: $border-width solid $color-border;
-  background: $color-white;
+  border-inline-end: $border-width solid $color-line;
+  background: $color-surface-side;
   color: $color-text;
   font-family: $font-family-base;
   line-height: $line-height-tight;
@@ -48,8 +53,10 @@ $dot-size: 6px;
   flex-shrink: 0;
   align-items: center;
   gap: $space-3;
-  padding: $space-4 $space-4 $space-2;
-  border-bottom: 1px solid $color-line;
+  box-sizing: border-box;
+  min-height: $brand-height;
+  padding: 0 $space-3 0 $space-5;
+  border-bottom: $border-width solid $color-line;
 }
 
 .mark {
@@ -74,6 +81,7 @@ $dot-size: 6px;
 .productName {
   font-size: $font-size-md;
   font-weight: $font-weight-semibold;
+  letter-spacing: -0.01em;
 }
 
 .workspace {
@@ -81,12 +89,12 @@ $dot-size: 6px;
   font-size: 11.5px;
 }
 
-// Collapsed: logo above the toggle. The `Line` below `.brand` separates nav.
+// Collapsed: logo above the toggle.
 .root[data-collapsed='true'] .brand {
   flex-direction: column;
+  justify-content: center;
   gap: $space-2;
-  padding-inline: 0;
-  padding-bottom: $space-4;
+  padding: $space-4 0;
 }
 
 .root[data-collapsed='true'] .brandText {
@@ -113,31 +121,36 @@ $dot-size: 6px;
   color: $color-text-subtle;
   font-size: $font-size-2xs;
   font-weight: $font-weight-semibold;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   white-space: nowrap;
 }
 
 .empty {
-  margin: 0;
+  margin: 0 0 $space-1;
   padding-inline: $space-3;
   color: $color-text-subtle;
-  font-size: $font-size-xs;
+  font-size: 12px;
+  line-height: 1.4;
 }
 
 .list,
 .children {
   display: grid;
-  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.list {
+  gap: 2px;
+}
+
+// Nested links hang off a guide line centred under the parent's icon.
 .children {
-  margin-top: 2px;
-  // Child text lines up with the parent label, past its icon.
-  padding-inline-start: $item-icon-size + $item-gap;
+  margin: 2px 0 $space-3 ($space-3 + $item-icon-size * 0.5);
+  padding-inline-start: $space-3;
+  border-inline-start: $border-width solid $color-line;
 }
 
 // A row: `<a>` for links, `<button>` for groups.
@@ -152,12 +165,12 @@ $dot-size: 6px;
   gap: $item-gap;
   box-sizing: border-box;
   width: 100%;
-  min-height: $item-height;
-  padding: $space-2 $space-3;
+  padding: $item-padding-y $space-3;
   border-radius: $radius-sm;
-  color: $color-text;
-  font-size: $font-size-md;
+  color: $color-text-muted;
+  font-size: $item-font-size;
   font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
   text-align: start;
   text-decoration: none;
   white-space: nowrap;
@@ -171,7 +184,7 @@ $dot-size: 6px;
 .itemIcon {
   @include icon-box($item-icon-size);
 
-  color: $color-text-muted;
+  color: inherit;
 }
 
 .itemLabel {
@@ -179,15 +192,12 @@ $dot-size: 6px;
   text-overflow: ellipsis;
 }
 
-// Top-level row for the current page, or a group holding it: blue text and a
-// bar on the sidebar's left edge (the bar sits in the nav padding).
+// Top-level row for the current page, or a group holding it: blue semibold
+// text and a bar on the sidebar's left edge (the bar sits in the nav padding).
 .item[data-active='true'],
 .item[aria-current='page']:not(.child) {
   color: $color-primary;
-
-  .itemIcon {
-    color: inherit;
-  }
+  font-weight: $font-weight-semibold;
 
   &::before {
     position: absolute;
@@ -202,16 +212,16 @@ $dot-size: 6px;
   }
 }
 
-// Nested link: lighter text; the current page gets a tinted pill.
+// Nested link: regular weight; the current page gets a tinted pill.
 .child {
-  min-height: 32px;
-  color: $color-text-muted;
+  padding: $child-padding;
+  border-radius: $child-radius;
   font-size: $font-size-sm;
   font-weight: $font-weight-regular;
 
   &[aria-current='page'] {
     color: $color-primary;
-    font-weight: $font-weight-medium;
+    font-weight: $font-weight-child-active;
 
     // Keep the pill on hover instead of the generic gray row fill.
     &,
@@ -247,8 +257,12 @@ $dot-size: 6px;
 // ---- Data sources ----------------------------------------------------------
 .sources {
   flex-shrink: 0;
-  padding: $space-4 $nav-padding-x $space-5;
-  border-top: $border-width solid $color-border-subtle;
+  padding: $space-3 $space-5 $space-5;
+  border-top: $border-width solid $color-line;
+
+  .sectionLabel {
+    padding-inline: 0;
+  }
 }
 
 .root[data-collapsed='true'] .sources {
@@ -257,9 +271,9 @@ $dot-size: 6px;
 
 .sourceList {
   display: grid;
-  gap: $space-2;
+  gap: 5px;
   margin: 0;
-  padding: 0 $space-3;
+  padding: 0;
   list-style: none;
 }
 
@@ -267,6 +281,7 @@ $dot-size: 6px;
   display: flex;
   align-items: center;
   gap: $space-2;
+  color: $color-text-muted;
   font-size: 12px;
 }
 
@@ -275,10 +290,10 @@ $dot-size: 6px;
   width: $dot-size;
   height: $dot-size;
   border-radius: $radius-pill;
-  background: $color-success;
+  background: $color-status-good;
 
   &[data-status='attention'] {
-    background: $color-warning;
+    background: $color-status-warn;
   }
 }
 
@@ -301,6 +316,3 @@ $dot-size: 6px;
 .srOnly {
   @include visually-hidden;
 }
-
-
- 

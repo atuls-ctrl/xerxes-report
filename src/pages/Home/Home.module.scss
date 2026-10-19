@@ -39,3 +39,19 @@
     /* 145% */
   }
 }
+// Chart card header: title on the left, chart type switch on the right.
+.table_header_content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-4;
+  margin-bottom: $space-4;
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+}
