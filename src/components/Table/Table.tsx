@@ -1081,9 +1081,9 @@ export function Table<RecordType extends object>({
                 size="md"
                 icon={<Icon name="cols" size={16} />}
                 // suffix={columnsCount}
-                // {...(columnsProps.onClick !== undefined && {
-                //   onClick: columnsProps.onClick,
-                // })}
+                {...(columnsProps.onClick !== undefined && {
+                  onClick: columnsProps.onClick,
+                })}
               >
                 {columnsProps.label ?? 'Columns'}
               </Button>

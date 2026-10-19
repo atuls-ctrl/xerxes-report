@@ -1,0 +1,9 @@
+@use '../../styles' as *;
+
+// Column groups side by side; one per row on narrow screens.
+.sections {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: $space-6 $space-5;
+  align-items: start;
+}

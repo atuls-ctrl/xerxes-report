@@ -19,6 +19,7 @@ import {
   ToggleButtonGroup,
   type ToggleButtonGroupOption,
 } from '../../components/ToggleButton'
+import { ColumnsDrawer } from './ColumnsDrawer'
 import styles from './Home.module.scss'
 
 type Team = 'Allmetrics' | 'Top10bycampaign'
@@ -139,6 +140,8 @@ export function HomePage() {
   const [query, setQuery] = useState('')
   const [activeKey, setActiveKey] = useState<Key>()
   const [chartType, setChartType] = useState<ChartType>('line')
+  const [columnsOpen, setColumnsOpen] = useState(false)
+  const [hiddenColumns, setHiddenColumns] = useState<string[]>([])
   const rows = filterTree(CAMPAIGNS, query)
 
   return (
@@ -212,13 +215,27 @@ export function HomePage() {
             options: GROUP_BY_OPTIONS,
             defaultValue: ['bundle', 'publisher', 'site'],
           }}
-          columnsControl
+          columnsControl={{
+            hiddenKeys: hiddenColumns,
+            onClick: () => {
+              setColumnsOpen(true)
+            },
+          }}
           {...(activeKey !== undefined && { activeRowKey: activeKey })}
           onRowClick={(record) => {
             setActiveKey((current) =>
               current === record.key ? undefined : record.key,
             )
           }}
+        />
+        <ColumnsDrawer
+          open={columnsOpen}
+          onClose={() => {
+            setColumnsOpen(false)
+          }}
+          columns={CAMPAIGN_COLUMNS}
+          hiddenKeys={hiddenColumns}
+          onApply={setHiddenColumns}
         />
       </section>
     </div>
