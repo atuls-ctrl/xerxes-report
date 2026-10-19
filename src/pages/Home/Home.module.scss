@@ -1,0 +1,41 @@
+@use '../../styles' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $space-5;
+  padding: $space-6;
+}
+
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $space-5;
+}
+
+.chartCard {
+  padding: $space-5;
+  background: $color-white;
+  border: 1px solid $color-border-subtle;
+  border-radius: $radius-md;
+}
+
+.title_main {
+  .heading {
+    color: var(--ink, #101828);
+    font-size: var(--line-height-14_5, 0.90625rem);
+    font-style: normal;
+    font-weight: var(--font-weight-600, 600);
+    line-height: var(--line-height-21, 1.3125rem);
+    /* 144.828% */
+  }
+
+  .subtext {
+    color: var(--ink-3, #8A94A6);
+    font-size: var(--font-size-12, 0.75rem);
+    font-style: normal;
+    font-weight: var(--font-weight-400, 400);
+    line-height: var(--line-height-17_4, 1.0875rem);
+    /* 145% */
+  }
+}

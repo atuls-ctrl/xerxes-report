@@ -45,10 +45,15 @@ const STATUS_CHART_COLORS: Record<MetricTileStatus, string> = {
   neutral: '#8a94a6',
 }
 
-// Flat fill, and the line runs edge to edge of its box.
+// Flat fill, and the line runs edge to edge of its box. No legend, markers
+// or hover effects: the tile is a static trend.
 const SPARKLINE_OPTIONS: ApexOptions = {
   fill: { type: 'solid', opacity: 0.12 },
   grid: { padding: { top: 2, right: 0, bottom: 2, left: 0 } },
+  legend: { show: false },
+  markers: { size: 0, hover: { size: 0 } },
+  xaxis: { crosshairs: { show: false } },
+  states: { hover: { filter: { type: 'none' } } },
 }
 
 const MIN_CHART_POINTS = 2
@@ -118,6 +123,9 @@ export function MetricTile({
           <div className={styles.chart} aria-hidden="true">
             <LineChart
               sparkline
+              legend="none"
+              showEndMarkers={false}
+              showTooltip={false}
               series={series}
               categories={categories}
               colors={colors}

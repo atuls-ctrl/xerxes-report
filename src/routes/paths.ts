@@ -4,7 +4,8 @@
  */
 export const ROUTE_PATHS = {
   home: '/',
-  campaignOverview: '/reports/performance/campaign-overview',
+  // campaignOverview: '/reports/performance/campaign-overview',
+  campaignOverview: '/',
   goalsEvents: '/reports/performance/goals-events',
   mmpAnalytics: '/reports/mmp-analytics',
   fraudTools: '/reports/fraud-tools',

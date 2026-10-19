@@ -33,6 +33,7 @@ import TrendIcon from '../../assets/icons/trend.svg?react';
 import UsersIcon from '../../assets/icons/users.svg?react';
 import WandIcon from '../../assets/icons/wand.svg?react';
 import PhoneOutlineIcon from '../../assets/icons/phoneOutline.svg?react';
+import FavIcon from '../../assets/logo/favicon.svg?react';
 
 export const svgMap = {
   alert: AlertIcon,
@@ -69,6 +70,7 @@ export const svgMap = {
   users: UsersIcon,
   wand: WandIcon,
   phoneOutline: PhoneOutlineIcon,
+  Fav: FavIcon,
 };
 
 /** Raster brand/platform logos under `src/assets/images` (keys match filenames). */
