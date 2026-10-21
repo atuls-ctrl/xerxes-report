@@ -1,0 +1,36 @@
+@use '../../styles' as *;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  padding: $space-4 $space-6;
+}
+
+// One line of controls; groups sit at the start and end.
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  flex-wrap: wrap;
+}
+
+.group {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.source {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-1;
+  color: $color-text-muted;
+  font-size: $font-size-xs;
+
+  strong {
+    color: $color-text;
+    font-weight: $font-weight-semibold;
+  }
+}
