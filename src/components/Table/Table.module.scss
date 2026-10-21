@@ -74,7 +74,7 @@ $rows-menu-shadow: 0 16px 40px -12px rgba(16, 24, 40, 0.28),
 // Rounded bottom corners. Clipped here, not on `.root`, so the toolbar
 // dropdowns can overflow the card; `clip` keeps the sticky header working.
 // `isolation` keeps antd's sticky z-indexes (43) under the toolbar dropdowns.
-.root > .table {
+.root>.table {
   isolation: isolate;
   overflow: clip;
   border-end-start-radius: calc(#{$radius-md} - #{$border-width});
@@ -138,10 +138,17 @@ $rows-menu-shadow: 0 16px 40px -12px rgba(16, 24, 40, 0.28),
 
 // Ghost trigger around the chips: no fill on hover (the chips already use
 // the hover fill), a border instead.
-.groupByDropdown > button[data-size] {
+.groupByDropdown>button[data-size] {
   --button-padding-x: 6px;
   --button-hover-bg: transparent;
   --button-hover-border: #{$color-border};
+}
+
+// Hover fill on the trigger. `filter_dropdown_badges` is a plain class set
+// by Dropdown, hence `:global`; Button paints `--button-hover-bg` on hover.
+.groupByDropdown>button:global(.filter_dropdown_badges)[data-size] {
+  --button-hover-bg: #{$color-surface-hover};
+  --button-hover-border: transparent;
 }
 
 .groupByValue {

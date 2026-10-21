@@ -180,6 +180,7 @@ export function Dropdown({
         variant={variant}
         size={size}
         icon={icon}
+        className='filter_dropdown_badges'
         suffix={suffix}
         disabled={disabled}
         aria-haspopup="dialog"
