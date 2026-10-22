@@ -5,6 +5,7 @@
   flex-direction: column;
   gap: $space-2;
   padding: $space-4 $space-6;
+  background: #f5f6f7;
 }
 
 // One line of controls; groups sit at the start and end.
@@ -33,4 +34,32 @@
     color: $color-text;
     font-weight: $font-weight-semibold;
   }
+}
+
+.flex_group{
+  display: flex;
+  justify-content: space-between;
+}
+.breadcrumb_nav {
+  display: flex;
+  gap: 5.6px;
+  align-items: center;
+
+  .breadcrumb {
+    color: #8A94A6;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17.4px;
+  }
+}
+
+.heading {
+  color: #101828;
+  font-size: 19px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 27.55px;
+  letter-spacing: -0.285px;
+  margin: 0;
 }

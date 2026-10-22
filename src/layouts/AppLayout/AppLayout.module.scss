@@ -18,12 +18,13 @@
   min-width: 0;
   min-height: 0;
 
-  > header {
-    border-bottom: $border-width solid $color-border;
-    background: $color-white;
+  >header {
+    border-bottom: $border-width solid #E6E8EC; 
+    // border-bottom: $border-width solid $color-border;
+    // background: $color-white;
   }
 
-  > main {
+  >main {
     min-height: 0;
     overflow: auto;
   }

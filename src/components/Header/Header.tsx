@@ -1,4 +1,5 @@
 import type { Currency, Perspective } from '../../state/reportQuery'
+import { Button } from '../Button'
 import { DatePicker, type DatePickerValue } from '../DatePicker'
 import { Icon } from '../icons'
 import {
@@ -53,40 +54,80 @@ export function Header({
 }: HeaderProps) {
   return (
     <header className={styles.root}>
-      <div className={styles.row}>
-        <ToggleButtonGroup<Perspective>
-          options={PERSPECTIVES}
-          value={perspective}
-          onChange={onPerspectiveChange}
-          size="sm"
-          aria-label="Perspective"
-        />
-      </div>
-
-      <div className={styles.row}>
-        <div className={styles.group}>
-          <DatePicker value={dateValue} onChange={onDateChange} size="sm" />
-          <ToggleButton
-            checked={compare}
-            label={compareLabel}
-            labelPosition="end"
-            size="sm"
-            onChange={onCompareChange}
-          />
-          <span className={styles.source}>
-            <Icon name="link" size={14} aria-hidden="true" />
-            Source: <strong>{sourceLabel}</strong>
+      <div className={styles.flex_group}>
+        <div className={styles.title_main}>
+          <span className={styles.breadcrumb_nav}>
+            <span className={styles.breadcrumb}>Reports</span>
+            <span className={styles.breadcrumb}><Icon height={12} name="right" aria-hidden="true" /></span>
+            <span className={styles.breadcrumb}>Performance</span>
           </span>
+          <h1 className={styles.heading}>Campaign overview </h1>
         </div>
 
-        <ToggleButtonGroup<Currency>
-          options={CURRENCIES}
-          value={currency}
-          onChange={onCurrencyChange}
-          size="sm"
-          aria-label="Currency"
-        />
+        <div className={styles.group}>
+          <ToggleButtonGroup<Perspective>
+            options={PERSPECTIVES}
+            value={perspective}
+            onChange={onPerspectiveChange}
+            size="md"
+            aria-label="Perspective"
+          />
+          <Button
+            size="md"
+            variant="secondary"
+            icon={<Icon name="bell" aria-hidden="true" />}
+            badge={3}
+            aria-label="Notifications"
+          />
+          <Button
+            size="md"
+            variant="secondary"
+            icon={<Icon name="share" aria-hidden="true" />}
+          > Share
+          </Button>
+          <Button
+            size="md"
+            variant="secondary"
+            icon={<Icon name="download" aria-hidden="true" />}
+          > Export
+          </Button>
+          <Button
+            size="md"
+            variant="primary"
+            icon={<Icon name="save" aria-hidden="true" />}
+          > Save as report
+          </Button>
+        </div>
       </div>
-    </header>
+
+      <div className={styles.flex_group}>
+        <div>
+          <div className={styles.group}>
+            <DatePicker value={dateValue} onChange={onDateChange} size="md" />
+            <ToggleButton
+              checked={compare}
+              label={compareLabel}
+              labelPosition="end"
+              size="md"
+              onChange={onCompareChange}
+            />
+            <span className={styles.source}>
+              <Icon name="link" size={14} aria-hidden="true" />
+              Source: <strong>{sourceLabel}</strong>
+            </span>
+          </div>
+        </div>
+        <div>
+          <ToggleButtonGroup<Currency>
+            options={CURRENCIES}
+            value={currency}
+            onChange={onCurrencyChange}
+            size="md"
+            aria-label="Currency"
+          />
+        </div>
+      </div>
+
+    </header >
   )
 }
