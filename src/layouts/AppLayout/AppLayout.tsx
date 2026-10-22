@@ -3,6 +3,7 @@ import { Content } from '../../components/Content'
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { DEFAULT_SIDEBAR_SECTIONS } from '../../components/Sidebar/sidebarNav'
+import type { UserMenuUser } from '../../components/UserMenu'
 import {
   comparePeriodLabel,
   perspectiveLabel,
@@ -14,6 +15,14 @@ import styles from './AppLayout.module.scss'
 import { DEFAULT_DATA_SOURCES } from './dataSources'
 
 const SIDEBAR_COLLAPSED_KEY = 'xerxes.sidebar.collapsed'
+
+// Placeholder account from the Figma design until auth provides one.
+const CURRENT_USER: UserMenuUser = {
+  name: 'Ops Head',
+  email: 'admin@xapads.example',
+  role: 'Ops Head',
+  scope: 'All campaigns',
+}
 
 /** Reads the last rail width. Missing or unreadable storage means expanded. */
 function readCollapsed(): boolean {
@@ -74,6 +83,7 @@ export function AppLayout() {
           onCompareChange={actions.setCompare}
           onPerspectiveChange={actions.setPerspective}
           onCurrencyChange={actions.setCurrency}
+          user={CURRENT_USER}
         />
         <Content />
       </div>

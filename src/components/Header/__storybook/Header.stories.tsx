@@ -31,6 +31,13 @@ const meta = {
     onCompareChange: fn(),
     onPerspectiveChange: fn(),
     onCurrencyChange: fn(),
+    user: {
+      name: 'Ops Head',
+      email: 'admin@xapads.example',
+      role: 'Ops Head',
+      scope: 'All campaigns',
+    },
+    onSignOut: fn(),
   },
   argTypes: {
     perspective: { control: 'inline-radio', options: ['supply', 'demand'] },

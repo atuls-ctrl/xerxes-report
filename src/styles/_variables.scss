@@ -18,6 +18,8 @@ $color-border-subtle: rgba(16, 24, 40, 0.1);
 $color-primary: #2a78d6;
 // Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
 $color-primary-soft: rgba($color-primary, 0.1);
+// Light end of the avatar gradient (primary -> tint).
+$color-primary-tint: #8ab5e8;
 $color-danger: #d03b3b;
 // Status dots: healthy / connected.
 $color-success: #1baf7a;

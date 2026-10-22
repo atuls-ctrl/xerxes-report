@@ -7,6 +7,7 @@ import {
   ToggleButtonGroup,
   type ToggleButtonGroupOption,
 } from '../ToggleButton'
+import { UserMenu, type UserMenuUser } from '../UserMenu'
 import styles from './Header.module.scss'
 
 /** Segmented options, in display order. */
@@ -37,6 +38,9 @@ export interface HeaderProps {
   onCompareChange: (compare: boolean) => void
   onPerspectiveChange: (perspective: Perspective) => void
   onCurrencyChange: (currency: Currency) => void
+  /** Signed-in account. The profile menu is hidden without it. */
+  user?: UserMenuUser
+  onSignOut?: () => void
 }
 
 /** Header bar wired to the shared report query. */
@@ -51,6 +55,8 @@ export function Header({
   onCompareChange,
   onPerspectiveChange,
   onCurrencyChange,
+  user,
+  onSignOut,
 }: HeaderProps) {
   return (
     <header className={styles.root}>
@@ -97,6 +103,12 @@ export function Header({
             icon={<Icon name="save" aria-hidden="true" />}
           > Save as report
           </Button>
+          {user !== undefined && (
+            <UserMenu
+              user={user}
+              {...(onSignOut !== undefined && { onSignOut })}
+            />
+          )}
         </div>
       </div>
 
