@@ -1,17 +1,23 @@
 import type { Currency, Perspective } from '../../state/reportQuery'
-import { Button } from '../Button'
 import { DatePicker, type DatePickerValue } from '../DatePicker'
 import { Icon } from '../icons'
-import { ToggleButton } from '../ToggleButton'
+import {
+  ToggleButton,
+  ToggleButtonGroup,
+  type ToggleButtonGroupOption,
+} from '../ToggleButton'
 import styles from './Header.module.scss'
 
 /** Segmented options, in display order. */
-const PERSPECTIVES: { value: Perspective; label: string }[] = [
+const PERSPECTIVES: ToggleButtonGroupOption<Perspective>[] = [
   { value: 'supply', label: 'Supply' },
   { value: 'demand', label: 'Demand' },
 ]
 
-const CURRENCIES: Currency[] = ['USD', 'RUB']
+const CURRENCIES: ToggleButtonGroupOption<Currency>[] = [
+  { value: 'USD', label: 'USD' },
+  { value: 'RUB', label: 'RUB' },
+]
 
 /**
  * Report controls. Values in, changes out; `AppLayout` owns the state.
@@ -48,22 +54,13 @@ export function Header({
   return (
     <header className={styles.root}>
       <div className={styles.row}>
-        <div className={styles.group} role="group" aria-label="Perspective">
-          {PERSPECTIVES.map((item) => (
-            <Button
-              key={item.value}
-              size="sm"
-              // Selected option is the bordered one, as in Figma.
-              variant={item.value === perspective ? 'secondary' : 'ghost'}
-              aria-pressed={item.value === perspective}
-              onClick={() => {
-                onPerspectiveChange(item.value)
-              }}
-            >
-              {item.label}
-            </Button>
-          ))}
-        </div>
+        <ToggleButtonGroup<Perspective>
+          options={PERSPECTIVES}
+          value={perspective}
+          onChange={onPerspectiveChange}
+          size="sm"
+          aria-label="Perspective"
+        />
       </div>
 
       <div className={styles.row}>
@@ -82,21 +79,13 @@ export function Header({
           </span>
         </div>
 
-        <div className={styles.group} role="group" aria-label="Currency">
-          {CURRENCIES.map((code) => (
-            <Button
-              key={code}
-              size="sm"
-              variant={code === currency ? 'secondary' : 'ghost'}
-              aria-pressed={code === currency}
-              onClick={() => {
-                onCurrencyChange(code)
-              }}
-            >
-              {code}
-            </Button>
-          ))}
-        </div>
+        <ToggleButtonGroup<Currency>
+          options={CURRENCIES}
+          value={currency}
+          onChange={onCurrencyChange}
+          size="sm"
+          aria-label="Currency"
+        />
       </div>
     </header>
   )
