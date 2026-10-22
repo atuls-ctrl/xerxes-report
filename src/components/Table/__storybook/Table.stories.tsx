@@ -4,7 +4,14 @@ import { fn, userEvent, within } from 'storybook/test'
 import { Button } from '../../Button'
 import { Icon } from '../../icons'
 import { ToggleButton } from '../../ToggleButton'
-import { Table, TableRowLabel, TableValue } from '..'
+import {
+  filterTreeRows,
+  Table,
+  TableRowLabel,
+  TableValue,
+  useTableActions,
+  useTableState,
+} from '..'
 import type { TableColumnsType, TableProps } from '..'
 import {
   ADVERTISERS,
@@ -79,17 +86,12 @@ const columnsButton = (count: string) => (
 )
 
 // Search over the label and the muted name, keeping parents of matches.
-function filterTree(rows: CampaignRow[], query: string): CampaignRow[] {
+function searchCampaigns(rows: CampaignRow[], query: string): CampaignRow[] {
   const needle = query.trim().toLowerCase()
   if (!needle) return rows
-  return rows.flatMap((row) => {
-    const children = row.children ? filterTree(row.children, needle) : []
-    const matches = `${row.title} ${row.meta ?? ''}`
-      .toLowerCase()
-      .includes(needle)
-    if (matches) return [row]
-    return children.length > 0 ? [{ ...row, children }] : []
-  })
+  return filterTreeRows(rows, (row) =>
+    `${row.title} ${row.meta ?? ''}`.toLowerCase().includes(needle),
+  )
 }
 
 // Full report card: search, density, columns, total row, sorting,
@@ -97,14 +99,14 @@ function filterTree(rows: CampaignRow[], query: string): CampaignRow[] {
 function ReportTable(args: CampaignTableProps) {
   const [query, setQuery] = useState('')
   const [activeKey, setActiveKey] = useState<Key>()
-  const rows = filterTree(CAMPAIGNS, query)
+  const rows = searchCampaigns(CAMPAIGNS, query)
   return (
     <Table<CampaignRow>
       {...args}
       dataSource={rows}
       actions={columnsButton('19 of 138')}
       search={{ value: query, onSearch: setQuery }}
-      {...(activeKey !== undefined && { activeRowKey: activeKey })}
+      activeRowKey={activeKey}
       onRowClick={(record, index, event) => {
         setActiveKey((current) =>
           current === record.key ? undefined : record.key,
@@ -233,6 +235,90 @@ export const RowSelection: Story = {
         }}
       />
     )
+  },
+}
+
+// Uncontrolled selection: the table keeps the keys in its store, and toolbar
+// content reads them with `useTableState` — no state in the parent.
+function SelectedCount() {
+  const { selectedRowKeys } = useTableState()
+  return (
+    <span style={{ fontSize: 12.5, color: colors.textMuted }}>
+      {selectedRowKeys.length} selected
+    </span>
+  )
+}
+
+function ExportSelected() {
+  const { selectedRowKeys } = useTableState()
+  const { clearSelection } = useTableActions()
+  return (
+    <>
+      <Button
+        size="md"
+        variant="ghost"
+        disabled={selectedRowKeys.length === 0}
+        onClick={clearSelection}
+      >
+        Clear
+      </Button>
+      <Button
+        size="md"
+        icon={<Icon name="download" size={16} />}
+        disabled={selectedRowKeys.length === 0}
+      >
+        Export
+      </Button>
+    </>
+  )
+}
+
+export const SelectionFromStore: Story = {
+  args: {
+    search: false,
+    showDensityToggle: false,
+    dataSource: CAMPAIGNS.map(({ children: _children, ...row }) => row),
+    toolbar: <SelectedCount />,
+    actions: <ExportSelected />,
+    rowSelection: { defaultSelectedRowKeys: ['52011', '31023'] },
+  },
+}
+
+// Single selection: `type: 'radio'` keeps at most one row picked.
+export const SingleRowSelection: Story = {
+  args: {
+    search: false,
+    showDensityToggle: false,
+    dataSource: CAMPAIGNS.map(({ children: _children, ...row }) => row),
+    toolbar: <SelectedCount />,
+    rowSelection: { type: 'radio', defaultSelectedRowKeys: ['52011'] },
+  },
+}
+
+// `activeRowKey` takes one key or a list, e.g. rows compared side by side.
+export const MultipleActiveRows: Story = {
+  args: {
+    dataSource: CAMPAIGNS.slice(0, 5),
+    activeRowKey: ['52011', '31023'],
+    search: false,
+    showDensityToggle: false,
+    pagination: false,
+  },
+}
+
+// "Group by" takes one dimension or several; Apply reports them all.
+export const GroupBy: Story = {
+  args: {
+    search: false,
+    groupBy: {
+      options: [
+        { value: 'bundle', label: 'App bundle' },
+        { value: 'publisher', label: 'Publisher' },
+        { value: 'site', label: 'Site ID' },
+      ],
+      defaultValue: 'bundle',
+      onChange: fn(),
+    },
   },
 }
 

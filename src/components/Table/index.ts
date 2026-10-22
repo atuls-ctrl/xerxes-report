@@ -1,5 +1,6 @@
 export { Table } from './Table'
 export type {
+  OneOrMany,
   TableColumnGroupType,
   TableColumnsControlProps,
   TableColumnType,
@@ -9,9 +10,14 @@ export type {
   TableGroupByOption,
   TableGroupByProps,
   TableProps,
+  TableRowKey,
   TableSearchProps,
   TableTotalRow,
-} from './Table'
+} from './types'
+// Hooks for content rendered inside a Table (toolbar, cells, custom rows).
+export { useTableActions, useTableState } from './store'
+export type { TableActions, TableSortState, TableState } from './store'
+export { filterTreeRows } from './utils/records'
 export { TableRowLabel, TableTag, TableValue } from './TableCells'
 export type {
   TableRowLabelProps,

@@ -5,7 +5,11 @@ import {
   type LineChartSeries,
 } from '../../components/Charts/LineChart'
 import { MetricTile, type MetricTileStatus } from '../../components/MetricTile'
-import { Table, type TableGroupByOption } from '../../components/Table'
+import {
+  filterTreeRows,
+  Table,
+  type TableGroupByOption,
+} from '../../components/Table'
 // Placeholder rows shared with the Table stories until the API is wired up.
 import {
   CAMPAIGNS,
@@ -123,19 +127,18 @@ const metrics: Metric[] = [
   },
 ]
 
+// Picked when the page opens and restored by "Reset" in the Group by menu.
+const DEFAULT_GROUP_BY = ['bundle', 'publisher', 'site']
+
 // Search over the label and the muted name, keeping parents of matches.
-function filterTree(rows: CampaignRow[], query: string): CampaignRow[] {
+function searchCampaigns(rows: CampaignRow[], query: string): CampaignRow[] {
   const needle = query.trim().toLowerCase()
   if (!needle) return rows
-  return rows.flatMap((row) => {
-    const children = row.children ? filterTree(row.children, needle) : []
-    const matches = `${row.title} ${row.meta ?? ''}`
-      .toLowerCase()
-      .includes(needle)
-    if (matches) return [row]
-    return children.length > 0 ? [{ ...row, children }] : []
-  })
+  return filterTreeRows(rows, (row) =>
+    `${row.title} ${row.meta ?? ''}`.toLowerCase().includes(needle),
+  )
 }
+
 /** Routed home page; reads the shared header query instead of localStorage. */
 export function HomePage() {
   const reportQuery = useReportQuery()
@@ -158,7 +161,9 @@ export function HomePage() {
   const [chartType, setChartType] = useState<ChartType>('line')
   const [columnsOpen, setColumnsOpen] = useState(false)
   const [hiddenColumns, setHiddenColumns] = useState<string[]>([])
-  const rows = filterTree(CAMPAIGNS, query)
+  // Applied Group by dimensions; the grouped report request will read these.
+  const [groupBy, setGroupBy] = useState(DEFAULT_GROUP_BY)
+  const rows = searchCampaigns(CAMPAIGNS, query)
 
   return (
     <div className={styles.root}>
@@ -177,7 +182,6 @@ export function HomePage() {
       </section>
 
       <section className={styles.chartCard} aria-label="Metric trends">
-
         <div className={styles.table_header_content}>
           <div className={styles.title_main}>
             <div className={styles.heading}>All metrics over time</div>
@@ -229,7 +233,9 @@ export function HomePage() {
           search={{ value: query, onSearch: setQuery }}
           groupBy={{
             options: GROUP_BY_OPTIONS,
-            defaultValue: ['bundle', 'publisher', 'site'],
+            value: groupBy,
+            defaultValue: DEFAULT_GROUP_BY,
+            onChange: setGroupBy,
           }}
           columnsControl={{
             hiddenKeys: hiddenColumns,
@@ -237,7 +243,7 @@ export function HomePage() {
               setColumnsOpen(true)
             },
           }}
-          {...(activeKey !== undefined && { activeRowKey: activeKey })}
+          activeRowKey={activeKey}
           onRowClick={(record) => {
             setActiveKey((current) =>
               current === record.key ? undefined : record.key,

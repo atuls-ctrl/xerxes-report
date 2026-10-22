@@ -12,10 +12,12 @@
     "typecheck": "tsc -b",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "check": "npm run typecheck && npm run lint && npm run format:check",
+    "check": "npm run typecheck && npm run lint && npm run test && npm run format:check",
     "preview": "vite preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "antd": "^6.6.6",
@@ -31,6 +33,9 @@
     "@eslint/js": "^10.0.1",
     "@storybook/addon-docs": "^10.6.1",
     "@storybook/react-vite": "^10.6.1",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "@types/node": "^24.13.3",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
@@ -41,6 +46,7 @@
     "eslint-plugin-react-refresh": "^0.5.7",
     "eslint-plugin-storybook": "^10.6.1",
     "globals": "^17.13.0",
+    "jsdom": "^29.1.1",
     "prettier": "^3.9.10",
     "sass-embedded": "^1.105.1",
     "storybook": "^10.6.1",
@@ -48,6 +54,7 @@
     "typescript-eslint": "^8.71.1",
     "vite": "^8.3.0",
     "vite-plugin-checker": "^0.14.5",
-    "vite-plugin-svgr": "^5.2.0"
+    "vite-plugin-svgr": "^5.2.0",
+    "vitest": "^5.0.5"
   }
 }
