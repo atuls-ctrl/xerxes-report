@@ -17,9 +17,16 @@ $color-white: #fff;
 $color-black: #000;
 
 // Brand / primary.
-$color-primary: #2a78d6;
+$color-primary: #5052C9;
 // Light end of the avatar gradient (primary -> tint).
-$color-primary-tint: #8ab5e8;
+$color-primary-tint: #a1a2dd;
+
+// Brand / primary.
+// $color-primary: #2a78d6;
+// // Light end of the avatar gradient (primary -> tint).
+// $color-primary-tint: #8ab5e8;
+
+
 // Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
 $color-primary-soft: rgba($color-primary, 0.1);
 // Date picker in-range days; a touch stronger than `soft`.
@@ -91,4 +98,4 @@ $color-chart-5: #e87ba4;
 $color-chart-6: #7c5ce0;
 $color-chart-7: #12a5b8;
 $color-chart-8: #a8623a;
-$color-chart-9: #8a9a1f;
+$color-chart-9: #8a9a1f; 

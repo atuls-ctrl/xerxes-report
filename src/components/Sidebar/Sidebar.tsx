@@ -106,7 +106,7 @@ export function Sidebar({
           aria-hidden={isCollapsed ? undefined : true}
           aria-label={isCollapsed ? productName : undefined}
         >
-          <Icon name="Fav" size={18} aria-hidden />
+          <Icon name="Fav" className={styles.logo} size={18} aria-hidden />
           {/* <Icon name="barchart" size={24} aria-hidden /> */}
         </span>
         <div className={styles.brandText}>
