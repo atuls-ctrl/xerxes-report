@@ -5,7 +5,7 @@
   flex-direction: column;
   gap: $space-2;
   padding: $space-4 $space-6;
-  background: #f5f6f7;
+  background: $color-surface-header;
 }
 
 // One line of controls; groups sit at the start and end.
@@ -46,7 +46,7 @@
   align-items: center;
 
   .breadcrumb {
-    color: #8A94A6;
+    color: $color-text-subtle;
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -55,7 +55,7 @@
 }
 
 .heading {
-  color: #101828;
+  color: $color-text;
   font-size: 19px;
   font-style: normal;
   font-weight: 600;

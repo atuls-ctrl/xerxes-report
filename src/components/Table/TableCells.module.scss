@@ -2,18 +2,18 @@
 
 // Figma "Row label (caret, status dot, id, name)" and "Cell types".
 $dot-size: 7px;
-$dot-active: #0ca30c;
+$dot-active: $color-status-good;
 $row-title-line-height: 15.6px;
 $row-meta-font-size: 11.5px;
 $row-meta-line-height: 13.8px;
 $value-strong-font-size: 13.5px;
-$tone-negative: #b42323;
-$tone-positive: #067306;
+$tone-negative: $color-negative;
+$tone-positive: $color-positive;
 $tag-height: 22px;
 $tag-padding-x: 11px;
 $tag-font-size: 12px;
-$tag-success-bg: rgba(54, 226, 106, 0.15);
-$tag-success-border: rgba(53, 212, 101, 0.38);
+$tag-success-bg: $color-tag-success-bg;
+$tag-success-border: $color-tag-success-border;
 
 .srOnly {
   @include visually-hidden;

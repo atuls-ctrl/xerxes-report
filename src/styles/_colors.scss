@@ -1,0 +1,94 @@
+// Color tokens: the single source of truth for every color in the app.
+// Values come from the Figma file "Xerxes AI Reports".
+//
+// - SCSS: available everywhere through `@use '../../styles' as *;`.
+//   Never write a hex/rgb/named color literal in a component stylesheet.
+// - TypeScript (ApexCharts options, inline styles, stories): import
+//   `colors` / `chartColors` from `src/styles/colors.ts`. To expose a new
+//   token there, add it to the `:export` block in `colors.module.scss` and
+//   to `colors.ts`.
+// - Reuse a token before adding a shade. Near-identical values below are
+//   kept apart on purpose; each one's comment says where it belongs.
+//
+// This file emits no CSS, so it is safe to `@use` from a CSS module.
+
+// Base.
+$color-white: #fff;
+$color-black: #000;
+
+// Brand / primary.
+$color-primary: #2a78d6;
+// Light end of the avatar gradient (primary -> tint).
+$color-primary-tint: #8ab5e8;
+// Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
+$color-primary-soft: rgba($color-primary, 0.1);
+// Date picker in-range days; a touch stronger than `soft`.
+$color-primary-range: rgba($color-primary, 0.12);
+// Opaque pale blue behind count badges (checkbox rows).
+$color-primary-subtle: #e8f1fc;
+
+// Backgrounds & surfaces.
+$color-page: #f4f5f7;
+// Header bar. One step lighter than the page, as in Figma.
+$color-surface-header: #f5f6f7;
+// Off-white app chrome behind the sidebar.
+$color-surface-side: #fafafb;
+// Hover fill for rows, menu items and quiet buttons.
+$color-surface-hover: #f2f4f7;
+
+// Table row fills. Opaque so sticky columns hide what scrolls under them.
+$color-row-active: #eaf2fd;
+$color-row-highlight: #f5f9fd;
+$color-row-highlight-total: #e6ecf5;
+
+// Text.
+$color-text: #101828;
+$color-text-muted: #475467;
+$color-text-subtle: #8a94a6;
+$color-text-placeholder: #757575;
+
+// Borders & dividers.
+$color-border: #d0d5dd;
+$color-border-strong: #8a94a6;
+$color-border-subtle: rgba($color-text, 0.1);
+// Hairlines: header underline, section dividers, expand caret fill.
+$color-line: #e6e8ec;
+
+// Status. `success`/`warning`/`danger` are the UI accents (alerts, inputs,
+// chart flags); `status-good`/`status-warn` are the Figma `good`/`warn` dots
+// for live vs. needs-attention data sources and positive trend lines.
+$color-success: #1baf7a;
+$color-warning: #f59e0b;
+$color-danger: #d03b3b;
+$color-status-good: #0ca30c;
+$color-status-warn: #fab219;
+
+// Trend tones: text on, and fill of, up/down badges and signed values.
+$color-positive: #067306;
+$color-positive-bg: #e7f6e7;
+$color-negative: #b42323;
+$color-negative-bg: #fce9e9;
+// "Active" tag pill in table cells.
+$color-tag-success-bg: rgba(54, 226, 106, 0.15);
+$color-tag-success-border: rgba(53, 212, 101, 0.38);
+
+// Interactive states.
+// Focus ring: primary at 40% so it works on white and on the page background.
+$color-focus-ring: rgba($color-primary, 0.4);
+$color-error-ring: rgba($color-danger, 0.25);
+$color-success-ring: rgba($color-success, 0.25);
+
+// Overlays & shadows. Shadows are tinted with the text color.
+$color-shadow: $color-text;
+$color-overlay: rgba($color-shadow, 0.32);
+
+// Chart series, in legend order (Figma "Xerxes AI Reports" charts).
+$color-chart-1: #2a78d6;
+$color-chart-2: #eb6834;
+$color-chart-3: #1baf7a;
+$color-chart-4: #eda100;
+$color-chart-5: #e87ba4;
+$color-chart-6: #7c5ce0;
+$color-chart-7: #12a5b8;
+$color-chart-8: #a8623a;
+$color-chart-9: #8a9a1f;

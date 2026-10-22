@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite'
 import { useState } from 'react'
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test'
 import { BarChart, type BarChartProps, type BarChartSeries } from '../BarChart'
+import { colors } from '../../../../styles/colors'
 
 const categories = [
   '5 Oct',
@@ -121,9 +122,9 @@ const meta = {
       <div
         style={{
           padding: 24,
-          border: '1px dashed #d0d5dd',
+          border: `1px dashed ${colors.border}`,
           borderRadius: 12,
-          background: '#fff',
+          background: colors.white,
         }}
       >
         <Story />
@@ -202,7 +203,7 @@ export const CustomOptions: Story = {
   args: {
     options: {
       annotations: {
-        yaxis: [{ y: 90, borderColor: '#d03b3b', strokeDashArray: 4 }],
+        yaxis: [{ y: 90, borderColor: colors.danger, strokeDashArray: 4 }],
       },
     },
   },
@@ -291,7 +292,7 @@ export const Horizontal: Story = {
     layout: 'horizontal',
     normalize: false,
     legend: 'none',
-    barColors: ['#d03b3b'],
+    barColors: [colors.danger],
   },
   render: renderRows,
 }
@@ -321,7 +322,7 @@ export const HorizontalCustomSizes: Story = {
     layout: 'horizontal',
     normalize: false,
     legend: 'none',
-    colors: ['#1baf7a'],
+    colors: [colors.success],
     barHeight: 16,
     rowHeight: 32,
     labelWidth: 170,

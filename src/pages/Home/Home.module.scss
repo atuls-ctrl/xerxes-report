@@ -30,7 +30,7 @@
 
 .title_main {
   .heading {
-    color: var(--ink, #101828);
+    color: $color-text;
     font-size: var(--line-height-14_5, 0.90625rem);
     font-style: normal;
     font-weight: var(--font-weight-600, 600);
@@ -39,7 +39,7 @@
   }
 
   .subtext {
-    color: var(--ink-3, #8A94A6);
+    color: $color-text-subtle;
     font-size: var(--font-size-12, 0.75rem);
     font-style: normal;
     font-weight: var(--font-weight-400, 400);

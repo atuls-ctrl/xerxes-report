@@ -3,10 +3,8 @@
 $drawer-width: 500px;
 $drawer-padding-x: 18px;
 $drawer-duration: 0.2s;
-$drawer-shadow:
-  0 16px 40px -12px rgba($color-text, 0.28),
-  0 2px 6px rgba($color-text, 0.08);
-$overlay-color: rgba($color-text, 0.32);
+$drawer-shadow: $shadow-panel;
+$overlay-color: $color-overlay;
 $title-font-size: 17px;
 $caption-font-size: 12px;
 

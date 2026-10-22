@@ -8,9 +8,7 @@ $swatch-height: 3px;
 $tip-min-width: 160px;
 $tip-radius: 8px;
 $tip-dot-size: 8px;
-$shadow-tip:
-  0 16px 40px -12px rgba($color-text, 0.28),
-  0 2px 6px rgba($color-text, 0.08);
+$shadow-tip: $shadow-panel;
 
 .root {
   display: flex;

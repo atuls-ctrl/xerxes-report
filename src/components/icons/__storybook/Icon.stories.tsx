@@ -1,7 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-vite'
 
-import Icon from '../Icon';
-import { ICON_NAMES } from '../iconMap';
+import Icon from '../Icon'
+import { ICON_NAMES } from '../iconMap'
+import { colors } from '../../../styles/colors'
 
 const meta = {
   title: 'Components/Icons',
@@ -15,12 +16,11 @@ const meta = {
       options: ICON_NAMES,
     },
   },
-} satisfies Meta<typeof Icon>;
+} satisfies Meta<typeof Icon>
 
-export default meta;
+export default meta
 
-type Story = StoryObj<typeof meta>;
-
+type Story = StoryObj<typeof meta>
 
 export const AllIcons: Story = {
   args: {
@@ -44,16 +44,16 @@ export const AllIcons: Story = {
             alignItems: 'center',
             padding: '0.8rem',
             gap: '0.8rem',
-            border: '1px solid var(--color-border, #e5e7eb)',
+            border: `1px solid ${colors.border}`,
             borderRadius: '0.8rem',
-            background: 'var(--color-white, #fff)',
+            background: colors.white,
           }}
         >
           <Icon name={name} width={28} height={28} alt={name} />
           <span
             style={{
               fontSize: '1.2rem',
-              color: 'var(--color-text-secondary, #6b7280)',
+              color: colors.textMuted,
               textAlign: 'center',
               wordBreak: 'break-all',
             }}
@@ -64,4 +64,4 @@ export const AllIcons: Story = {
       ))}
     </div>
   ),
-};
+}

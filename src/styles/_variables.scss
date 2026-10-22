@@ -1,42 +1,12 @@
 // Design tokens shared by every component. Values come from the Figma file
 // "Xerxes AI Reports". Import with `@use '../../styles' as *;`.
+@forward 'colors';
+@use 'colors' as *;
+
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
 
 // ---- Colors ----------------------------------------------------------------
-$color-white: #fff;
-$color-page: #f4f5f7;
-$color-surface-hover: #f2f4f7;
-
-$color-text: #101828;
-$color-text-muted: #475467;
-$color-text-subtle: #8a94a6;
-
-$color-border: #d0d5dd;
-$color-border-strong: #8a94a6;
-$color-border-subtle: rgba(16, 24, 40, 0.1);
-
-$color-primary: #2a78d6;
-// Tinted fill for selected rows (e.g. active sidebar link) on white surfaces.
-$color-primary-soft: rgba($color-primary, 0.1);
-// Light end of the avatar gradient (primary -> tint).
-$color-primary-tint: #8ab5e8;
-$color-danger: #d03b3b;
-// Status dots: healthy / connected.
-$color-success: #1baf7a;
-// Status dots: needs user action (re-auth, manual import).
-$color-warning: #f59e0b;
-
-// Focus ring: primary at 40% so it works on white and on the page background.
-$color-focus-ring: rgba(42, 120, 214, 0.4);
-
-$color-line: #E6E8EC;
-
-// Off-white app chrome behind the sidebar.
-$color-surface-side: #fafafb;
-
-// Status dots (Figma `good` / `warn`): live vs. needs-attention data sources.
-$color-status-good: #0ca30c;
-$color-status-warn: #fab219;
+// Defined in `_colors.scss` and forwarded from here.
 
 // ---- Spacing (4px base) ----------------------------------------------------
 $space-1: 4px;
@@ -78,15 +48,20 @@ $line-height-tight: 1.45; // 18.85 / 13
 
 // ---- Shadows ---------------------------------------------------------------
 $shadow-xs:
-  0 1px 1px rgba(16, 24, 40, 0.05),
-  0 1px 1.5px rgba(16, 24, 40, 0.06);
+  0 1px 1px rgba($color-shadow, 0.05),
+  0 1px 1.5px rgba($color-shadow, 0.06);
 
-$shadow-thumb: 0 1px 2px rgba(0, 0, 0, 0.2);
+$shadow-thumb: 0 1px 2px rgba($color-black, 0.2);
 
 // Floating surfaces: dropdowns, popovers.
 $shadow-popup:
-  0 12px 24px -8px rgba(16, 24, 40, 0.18),
-  0 2px 6px rgba(16, 24, 40, 0.08);
+  0 12px 24px -8px rgba($color-shadow, 0.18),
+  0 2px 6px rgba($color-shadow, 0.08);
+
+// Large floating panels: Dropdown, Drawer, chart tooltip, rows-per-page menu.
+$shadow-panel:
+  0 16px 40px -12px rgba($color-shadow, 0.28),
+  0 2px 6px rgba($color-shadow, 0.08);
 
 // ---- Motion & state --------------------------------------------------------
 $transition-duration: 0.15s;

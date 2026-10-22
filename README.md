@@ -1,5 +1,24 @@
 # React + TypeScript + Vite
 
+## Colors
+
+Every color is defined once, in [`src/styles/_colors.scss`](src/styles/_colors.scss),
+grouped by purpose (brand, surfaces, text, borders, status, trend tones, table
+rows, interactive states, overlays, chart series).
+
+- **SCSS:** `@use '../../styles' as *;` and use the variables, e.g.
+  `color: $color-text-muted;`. Don't write hex/rgb/named colors in component
+  stylesheets.
+- **TypeScript** (ApexCharts options, inline styles, stories):
+  `import { colors, chartColors } from '<path>/styles/colors'`. These values
+  are read from the same SCSS tokens through the `:export` block in
+  [`src/styles/colors.module.scss`](src/styles/colors.module.scss). To expose
+  another token to TS, add it there and in [`colors.ts`](src/styles/colors.ts).
+- **New colors:** reuse an existing token first. If a new shade is really
+  needed, add it to `_colors.scss` with a comment saying where it belongs.
+  Some near-identical values (e.g. `$color-page` vs `$color-surface-header`)
+  are kept apart on purpose to match Figma.
+
 This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
 
 Currently, two official plugins are available:

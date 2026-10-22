@@ -9,10 +9,10 @@ $badge-font-size: 12px;
 $badge-radius: 5px;
 
 // Badge colors per status. The sparkline colors live in the component.
-$color-high-bg: #e7f6e7;
-$color-high-text: #067306;
-$color-low-bg: #fce9e9;
-$color-low-text: #b42323;
+$color-high-bg: $color-positive-bg;
+$color-high-text: $color-positive;
+$color-low-bg: $color-negative-bg;
+$color-low-text: $color-negative;
 
 .root {
   --tile-badge-bg: #{$color-surface-hover};

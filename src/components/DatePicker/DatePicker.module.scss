@@ -4,7 +4,7 @@ $popup-width: 240px;
 $popup-padding-x: 14px;
 $cell-size: 28px;
 $checkbox-size: 16px;
-$color-range-bg: rgba($color-primary, 0.12);
+$color-range-bg: $color-primary-range;
 
 .root {
   position: relative;

@@ -1,6 +1,7 @@
 import type { ApexOptions } from 'apexcharts'
 import { useMemo, type HTMLAttributes } from 'react'
 import ReactApexChart from 'react-apexcharts'
+import { colors } from '../../../styles/colors'
 import { ChartFrame } from '../shared/ChartFrame'
 import {
   DEFAULT_COLORS,
@@ -65,7 +66,7 @@ export interface LineChartProps extends NativeDivProps {
 }
 
 const SPARKLINE_HEIGHT = 30
-const MARKER_STROKE = '#fff'
+const MARKER_STROKE = colors.white
 
 export function LineChart({
   series,

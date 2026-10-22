@@ -4,9 +4,7 @@ $panel-width: 235px;
 $panel-offset: 10px;
 $panel-radius: 10px;
 $panel-padding-x: $space-4;
-$panel-shadow:
-  0 16px 40px -12px rgba(16, 24, 40, 0.28),
-  0 2px 6px rgba(16, 24, 40, 0.08);
+$panel-shadow: $shadow-panel;
 
 .root {
   --dropdown-width: #{$panel-width};

@@ -1,0 +1,25 @@
+@use 'colors' as *;
+
+// Hands the SCSS color tokens to TypeScript. Read them through
+// `src/styles/colors.ts`, not this file. Keys are camelCase.
+:export {
+  white: $color-white;
+  primary: $color-primary;
+  page: $color-page;
+  text: $color-text;
+  textMuted: $color-text-muted;
+  textSubtle: $color-text-subtle;
+  border: $color-border;
+  success: $color-success;
+  danger: $color-danger;
+  statusGood: $color-status-good;
+  chart1: $color-chart-1;
+  chart2: $color-chart-2;
+  chart3: $color-chart-3;
+  chart4: $color-chart-4;
+  chart5: $color-chart-5;
+  chart6: $color-chart-6;
+  chart7: $color-chart-7;
+  chart8: $color-chart-8;
+  chart9: $color-chart-9;
+}
