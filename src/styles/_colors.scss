@@ -83,7 +83,7 @@ $color-shadow: $color-text;
 $color-overlay: rgba($color-shadow, 0.32);
 
 // Chart series, in legend order (Figma "Xerxes AI Reports" charts).
-$color-chart-1: #2a78d6;
+$color-chart-1: $color-primary;
 $color-chart-2: #eb6834;
 $color-chart-3: #1baf7a;
 $color-chart-4: #eda100;
