@@ -5,9 +5,11 @@ export type DateRange = [start: Dayjs, end: Dayjs]
 /** `preset` of a value picked from the calendar instead of the preset list. */
 export const CUSTOM_RANGE = 'custom'
 
+export type PresetKey = 'today' | 'yesterday' | 'last7' | 'thisMonth' | 'lastMonth' | typeof CUSTOM_RANGE
+
 export interface DatePickerPreset {
   /** Stable id, reported back as `value.preset`. */
-  key: string
+  key: PresetKey
   label: string
   /** Builds the range relative to the current time. */
   getRange: (now: Dayjs) => DateRange

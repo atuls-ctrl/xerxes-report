@@ -3,6 +3,13 @@ import { Content } from '../../components/Content'
 import { Header } from '../../components/Header'
 import { Sidebar } from '../../components/Sidebar'
 import { DEFAULT_SIDEBAR_SECTIONS } from '../../components/Sidebar/sidebarNav'
+import {
+  comparePeriodLabel,
+  perspectiveLabel,
+  toDatePickerValue,
+  useReportQuery,
+  useReportQueryActions,
+} from '../../state/reportQuery'
 import styles from './AppLayout.module.scss'
 import { DEFAULT_DATA_SOURCES } from './dataSources'
 
@@ -26,9 +33,19 @@ function writeCollapsed(collapsed: boolean) {
   }
 }
 
-/** App chrome: sidebar, header, and the routed page. */
+/**
+ * App chrome: sidebar, header, and the routed page.
+ * Sole writer of the report query; Header and Sidebar only get props.
+ */
 export function AppLayout() {
   const [collapsed, setCollapsed] = useState(readCollapsed)
+  const query = useReportQuery()
+  const actions = useReportQueryActions()
+
+  // Falls back to the raw id if a saved source is no longer connected.
+  const sourceLabel =
+    DEFAULT_DATA_SOURCES.find((source) => source.id === query.sourceId)?.name ??
+    query.sourceId
 
   const handleCollapsedChange = (next: boolean) => {
     setCollapsed(next)
@@ -41,12 +58,23 @@ export function AppLayout() {
         sections={DEFAULT_SIDEBAR_SECTIONS}
         dataSources={DEFAULT_DATA_SOURCES}
         productName="Xerxes Reports"
-        workspace="Demand view"
+        workspace={perspectiveLabel(query.perspective)}
         collapsed={collapsed}
         onCollapsedChange={handleCollapsedChange}
       />
       <div className={styles.body}>
-        <Header />
+        <Header
+          dateValue={toDatePickerValue(query)}
+          compare={query.compare}
+          compareLabel={comparePeriodLabel(query)}
+          sourceLabel={sourceLabel}
+          perspective={query.perspective}
+          currency={query.currency}
+          onDateChange={actions.setDate}
+          onCompareChange={actions.setCompare}
+          onPerspectiveChange={actions.setPerspective}
+          onCurrencyChange={actions.setCurrency}
+        />
         <Content />
       </div>
     </div>
